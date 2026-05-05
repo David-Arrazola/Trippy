@@ -4,5 +4,11 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "node src/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.1.0",
+    "openai": "^6.36.0"
   }
 }

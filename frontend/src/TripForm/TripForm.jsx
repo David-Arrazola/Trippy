@@ -1,44 +1,52 @@
+const API = import.meta.env.VITE_API_URL;
 import { useState } from "react";
 import "./TripForm.css";
 
 export default function TripForm() {
   const [formData, setFormData] = useState({
     destination: "",
-    tripLengthL: "",
+    tripLength: "",
     budget: "",
   });
 
   const updateForm = (event) => {
     const { name, value } = event.target;
     setFormData({
-      ...TripForm,
+      ...formData,
       [name]: value,
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("PRINTING");
+
+    await fetch(API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <label>
-        Primary Destination:
+        Destination:
         <input
           type="text"
           name="destination"
           value={formData.destination}
-          onChange={() => updateForm}
+          onChange={updateForm}
         />
       </label>
       <label>
-        Trip Length:
+        Duration:
         <input
           type="number"
           name="tripLength"
           value={formData.tripLength}
-          onChange={() => updateForm}
+          onChange={updateForm}
         />
       </label>
       <label>
@@ -47,10 +55,10 @@ export default function TripForm() {
           type="number"
           name="budget"
           value={formData.budget}
-          onChange={() => updateForm}
+          onChange={updateForm}
         />
       </label>
-      <button type="submit">Create Iternary</button>
+      <button type="submit">Generate Trip</button>
     </form>
   );
 }

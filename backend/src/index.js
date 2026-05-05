@@ -1,12 +1,7 @@
-const http = require("http");
+import app from "./app.js";
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT ?? 3000;
 
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify({ status: "ok", service: "backend" }));
-});
-
-server.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}...`);
 });

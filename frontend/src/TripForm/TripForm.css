@@ -1,3 +1,12 @@
-form {
+form > label {
   display: grid;
+}
+
+label > input {
+  width: fit-content;
+  justify-self: center;
+}
+
+form > button {
+  width: fit-content;
 }
