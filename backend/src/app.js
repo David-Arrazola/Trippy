@@ -86,15 +86,17 @@ async function generateTrip(destination, tripLength, budget) {
 
   const text = JSON.parse(response.output_text);
 
-  // console.log(text);
+  console.log(text);
 
-  // console.log(text.cities[0]);
+  console.log(text.cities[0]);
 
   const hotels = await getHotels(text.cities[0], destination);
-  console.log(hotels);
+  console.log("HOTELS IN CITY", hotels);
+
+  console.log("FILTERED HOTELS", filterHotels(hotels, budget));
 }
 
-const getHotels = async (city, country) => {
+async function getHotels(city, country) {
   const query = `hotels in ${city}, ${country}`;
 
   const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${process.env.GOOGLE_PLACES_KEY}`;
@@ -103,6 +105,22 @@ const getHotels = async (city, country) => {
   const data = await res.json();
 
   return data.results;
-};
+}
+
+function filterHotels(hotels, budget) {
+  let filtered;
+  if (budget === "budget") {
+    filtered = hotels.filter(
+      (curr) => curr.rating >= 3.0 && curr.rating <= 3.9,
+    );
+  } else if (budget === "balanced") {
+    filtered = hotels.filter(
+      (curr) => curr.rating >= 4.0 && curr.rating <= 4.5,
+    );
+  } else {
+    filtered = hotels.filter((curr) => curr.rating >= 4.6);
+  }
+  return filtered;
+}
 
 export default app;
