@@ -2,11 +2,7 @@ form > label {
   display: grid;
 }
 
-label > input {
+.formStyle {
   width: fit-content;
   justify-self: center;
-}
-
-form > button {
-  width: fit-content;
 }

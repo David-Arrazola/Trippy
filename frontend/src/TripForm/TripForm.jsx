@@ -31,7 +31,7 @@ export default function TripForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <label>
+      <label className="formStyle">
         Destination:
         <input
           type="text"
@@ -40,7 +40,7 @@ export default function TripForm() {
           onChange={updateForm}
         />
       </label>
-      <label>
+      <label className="formStyle">
         Duration:
         <input
           type="number"
@@ -49,14 +49,14 @@ export default function TripForm() {
           onChange={updateForm}
         />
       </label>
-      <label>
+      <label className="formStyle">
         Budget:
-        <input
-          type="number"
-          name="budget"
-          value={formData.budget}
-          onChange={updateForm}
-        />
+        <select name="budget" onChange={updateForm}>
+          <option></option>
+          <option value="budget">Budget</option>
+          <option value="balanced">Balanced</option>
+          <option value="Luxury">Luxury</option>
+        </select>
       </label>
       <button type="submit">Generate Trip</button>
     </form>

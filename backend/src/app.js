@@ -83,7 +83,26 @@ async function generateTrip(destination, tripLength, budget) {
     input: query,
     store: true,
   });
-  console.log(response);
+
+  const text = JSON.parse(response.output_text);
+
+  // console.log(text);
+
+  // console.log(text.cities[0]);
+
+  const hotels = await getHotels(text.cities[0], destination);
+  console.log(hotels);
 }
+
+const getHotels = async (city, country) => {
+  const query = `hotels in ${city}, ${country}`;
+
+  const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${process.env.GOOGLE_PLACES_KEY}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  return data.results;
+};
 
 export default app;
