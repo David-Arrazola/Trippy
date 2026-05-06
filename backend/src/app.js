@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import OpenAI from "openai";
 import dotenv from "dotenv";
+import { getJson } from "serpapi";
 
 dotenv.config();
 
@@ -15,89 +16,118 @@ app.use(cors({ origin: /localhost/ }));
 app.use(express.json());
 
 app.post("/", async (req, res) => {
-  const { destination, tripLength, budget } = req.body;
-  await generateTrip(destination, tripLength, budget);
+  try {
+    const { destination, tripLength, budget, departureAirport, startDate } =
+      req.body;
+
+    const result = await generateTrip(
+      destination,
+      Number(tripLength),
+      Number(budget),
+      departureAirport,
+      startDate,
+    );
+
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to generate trip" });
+  }
 });
 
-async function generateTrip(destination, tripLength, budget) {
+async function generateTrip(
+  destination,
+  tripLength,
+  budget,
+  departureAirport,
+  startDate,
+) {
   const query = `
-    You are a precise AI travel planning engine.
+You are a precise AI travel planning engine.
 
-    You MUST follow all user constraints exactly. Do not approximate, assume, or modify any numeric values.
+USER INPUT:
+- Destination: ${destination}
+- Departure Airport: ${departureAirport}
+- Start Date: ${startDate}
+- Trip Duration: ${tripLength} days
+- Total Budget: ${budget}
 
-    USER INPUT:
-    - Destination: ${destination}
-    - Total Trip Duration: ${tripLength} days
-    - Total Budget: ${budget}
+TASK:
+Create a structured travel itinerary AND determine correct airport codes.
 
-    TASK:
-    Create a structured travel itinerary.
+HARD CONSTRAINTS:
+1. Total days MUST equal ${tripLength}.
+2. Total budget MUST equal ${budget}.
+3. Output MUST be valid JSON only.
 
-    HARD CONSTRAINTS (must follow exactly):
-    1. The total number of days across all cities MUST equal ${tripLength}.
-    2. You MUST NOT change or reinterpret the duration value.
-    3. You MUST NOT default to common trip lengths (e.g., 7 or 10 days).
-    4. The sum of all "days" fields must exactly match ${tripLength}.
-    5. The sum of all "allocated_budget" must exactly match ${budget}.
-    6. Output must be valid JSON only (no extra text, no markdown).
+AIRPORT RULES:
+- Treat departureAirport as already an IATA code if possible.
+- If not, convert it to valid IATA code.
+- Convert destination to nearest major airport code.
 
-    PROCESS (do this internally before responding):
-    - First, decide how to split ${tripLength} days across 1–3 cities.
-    - Then allocate budget proportionally.
-    - Then verify totals are correct before outputting.
+PROCESS:
+- Determine airports
+- Build itinerary
+- Allocate budget
+- Validate totals
 
-    OUTPUT FORMAT (STRICT JSON ONLY):
-
+OUTPUT FORMAT (STRICT JSON ONLY):
+{
+  "trip_summary": {
+    "destination": "${destination}",
+    "total_days": ${tripLength},
+    "total_budget": ${budget}
+  },
+  "flight": {
+    "origin_airport": "IATA",
+    "destination_airport": "IATA",
+    "start_date": "${startDate}"
+  },
+  "cities": [
     {
-      "trip_summary": {
-        "destination": "string",
-        "total_days": ${tripLength},
-        "total_budget": ${budget},
-        "style": "budget | balanced | luxury"
-      },
-      "cities": [
-        {
-          "name": "string",
-          "days": number,
-          "allocated_budget": number,
-          "budget_per_night": number,
-          "highlights": [
-            "string",
-            "string",
-            "string"
-          ]
-        }
-      ]
+      "name": "string",
+      "days": number,
+      "allocated_budget": number,
+      "budget_per_night": number,
+      "highlights": ["string","string","string"]
     }
-
-    FINAL VALIDATION RULE:
-    Before responding, verify:
-    - sum(cities.days) == ${tripLength}
-    - sum(cities.allocated_budget) == ${budget}
-
-    If not correct, fix it before output.
+  ]
+}
 `;
 
   const response = await openai.responses.create({
     model: "gpt-5.4-mini",
     input: query,
-    store: true,
   });
 
   const text = JSON.parse(response.output_text);
 
-  console.log(text);
+  console.log("AI RESULT:", text); //fix DELETE LATER
 
-  console.log(text.cities[0]);
+  // HOTEL SEARCH (fixed usage)
+  const firstCity = text.cities[0].name;
 
-  const hotels = await getHotels(text.cities[0], destination);
-  console.log("HOTELS IN CITY", hotels);
+  const hotels = await getHotels(firstCity, destination);
+  console.log("HOTELS IN FIRST CITY", hotels); //fix DELETE LATER
 
-  console.log("FILTERED HOTELS", filterHotels(hotels, budget));
+  // const filteredHotels = filterHotels(hotels, budget);
+
+  const flights = await searchFlights(
+    text.flight.origin_airport,
+    text.flight.destination_airport,
+    text.flight.start_date,
+  );
+  console.log("FLIGHTS TO DESTINATION", flights); //fix DELETE LATER
+
+  return {
+    trip: text,
+    flights,
+    hotels: filteredHotels,
+  };
 }
 
-async function getHotels(city, country) {
-  const query = `hotels in ${city}, ${country}`;
+async function getHotels(city, destination) {
+  const query = `hotels in ${city}, ${destination}`;
 
   const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${process.env.GOOGLE_PLACES_KEY}`;
 
@@ -107,20 +137,20 @@ async function getHotels(city, country) {
   return data.results;
 }
 
-function filterHotels(hotels, budget) {
-  let filtered;
-  if (budget === "budget") {
-    filtered = hotels.filter(
-      (curr) => curr.rating >= 3.0 && curr.rating <= 3.9,
-    );
-  } else if (budget === "balanced") {
-    filtered = hotels.filter(
-      (curr) => curr.rating >= 4.0 && curr.rating <= 4.5,
-    );
-  } else {
-    filtered = hotels.filter((curr) => curr.rating >= 4.6);
-  }
-  return filtered;
+async function searchFlights(origin, destination, startDate) {
+  const response = await getJson("google_flights", {
+    api_key: process.env.SERP_API_KEY,
+
+    departure_id: origin,
+    arrival_id: destination,
+    outbound_date: startDate,
+
+    currency: "USD",
+    hl: "en",
+    gl: "us",
+  });
+
+  return response;
 }
 
 export default app;
