@@ -15,17 +15,26 @@ const openai = new OpenAI({
 app.use(cors({ origin: /localhost/ }));
 app.use(express.json());
 
+/**
+ * MAIN ROUTE
+ */
 app.post("/", async (req, res) => {
   try {
-    const { destination, tripLength, budget, departureAirport, startDate } =
+    const { destination, startDate, returnDate, budget, departureAirport } =
       req.body;
+
+    if (!startDate || !returnDate) {
+      return res.status(400).json({
+        error: "startDate and returnDate are required",
+      });
+    }
 
     const result = await generateTrip(
       destination,
-      Number(tripLength),
+      startDate,
+      returnDate,
       Number(budget),
       departureAirport,
-      startDate,
     );
 
     res.json(result);
@@ -35,12 +44,15 @@ app.post("/", async (req, res) => {
   }
 });
 
+/**
+ * AI TRIP GENERATION
+ */
 async function generateTrip(
   destination,
-  tripLength,
+  startDate,
+  returnDate,
   budget,
   departureAirport,
-  startDate,
 ) {
   const query = `
 You are a precise AI travel planning engine.
@@ -49,39 +61,33 @@ USER INPUT:
 - Destination: ${destination}
 - Departure Airport: ${departureAirport}
 - Start Date: ${startDate}
-- Trip Duration: ${tripLength} days
+- Return Date: ${returnDate}
 - Total Budget: ${budget}
 
 TASK:
 Create a structured travel itinerary AND determine correct airport codes.
 
 HARD CONSTRAINTS:
-1. Total days MUST equal ${tripLength}.
-2. Total budget MUST equal ${budget}.
-3. Output MUST be valid JSON only.
+1. Output MUST be valid JSON only.
+2. Budget must equal ${budget}.
+3. Use realistic travel planning.
 
 AIRPORT RULES:
-- Treat departureAirport as already an IATA code if possible.
-- If not, convert it to valid IATA code.
-- Convert destination to nearest major airport code.
-
-PROCESS:
-- Determine airports
-- Build itinerary
-- Allocate budget
-- Validate totals
+- Convert departureAirport to IATA if needed.
+- Convert destination to closest major airport.
 
 OUTPUT FORMAT (STRICT JSON ONLY):
+
 {
   "trip_summary": {
     "destination": "${destination}",
-    "total_days": ${tripLength},
     "total_budget": ${budget}
   },
   "flight": {
     "origin_airport": "IATA",
     "destination_airport": "IATA",
-    "start_date": "${startDate}"
+    "start_date": "${startDate}",
+    "return_date": "${returnDate}"
   },
   "cities": [
     {
@@ -102,48 +108,89 @@ OUTPUT FORMAT (STRICT JSON ONLY):
 
   const text = JSON.parse(response.output_text);
 
-  console.log("AI RESULT:", text); //fix DELETE LATER
+  console.log("AI RESULT:", text); //FIX DELETE LATER
 
-  // HOTEL SEARCH (fixed usage)
-  const firstCity = text.cities[0].name;
+  // -------------------------
+  // HOTEL SEARCH
+  // -------------------------
+  const firstCity = text.cities?.[0]?.name;
 
   const hotels = await getHotels(firstCity, destination);
-  console.log("HOTELS IN FIRST CITY", hotels); //fix DELETE LATER
 
-  // const filteredHotels = filterHotels(hotels, budget);
+  const rankedHotels = rankHotels(hotels, budget);
 
+  console.log("RANKED HOTELS", rankHotels);
+
+  // -------------------------
+  // FLIGHT SEARCH (FIXED)
+  // -------------------------
   const flights = await searchFlights(
     text.flight.origin_airport,
     text.flight.destination_airport,
-    text.flight.start_date,
+    startDate,
+    returnDate,
   );
-  console.log("FLIGHTS TO DESTINATION", flights); //fix DELETE LATER
+
+  console.log("FLIGHTS TO DESTINATION", flights);
 
   return {
     trip: text,
     flights,
-    hotels: filteredHotels,
+    hotels: rankedHotels.slice(0, 10),
   };
 }
 
+/**
+ * GOOGLE PLACES HOTELS
+ */
 async function getHotels(city, destination) {
   const query = `hotels in ${city}, ${destination}`;
 
-  const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${process.env.GOOGLE_PLACES_KEY}`;
+  const url =
+    `https://maps.googleapis.com/maps/api/place/textsearch/json?query=` +
+    encodeURIComponent(query) +
+    `&key=${process.env.GOOGLE_PLACES_KEY}`;
 
   const res = await fetch(url);
   const data = await res.json();
 
-  return data.results;
+  return data.results || [];
 }
 
-async function searchFlights(origin, destination, startDate) {
+/**
+ * HOTEL SCORING SYSTEM (price + rating)
+ */
+function rankHotels(hotels, budget) {
+  return hotels
+    .map((hotel) => {
+      const price = hotel?.rate_per_night?.extracted_lowest || 0;
+      const rating = hotel?.overall_rating || 0;
+
+      const priceScore = price > 0 ? 1 / price : 0;
+      const ratingScore = rating / 5;
+
+      return {
+        ...hotel,
+        score: ratingScore * 0.7 + priceScore * 0.3,
+      };
+    })
+    .sort((a, b) => b.score - a.score);
+}
+
+/**
+ * SERPAPI FLIGHTS
+ */
+async function searchFlights(origin, destination, startDate, returnDate) {
   const response = await getJson("google_flights", {
     api_key: process.env.SERP_API_KEY,
 
     departure_id: origin,
     arrival_id: destination,
+
     outbound_date: startDate,
+    return_date: returnDate,
+
+    type: "1", // round trip
 
     currency: "USD",
     hl: "en",

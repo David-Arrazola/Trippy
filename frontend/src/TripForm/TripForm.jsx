@@ -6,7 +6,7 @@ export default function TripForm() {
   const [formData, setFormData] = useState({
     destination: "",
     startDate: "",
-    tripLength: "",
+    returnDate: "",
     departureAirport: "",
     budget: "",
   });
@@ -43,24 +43,6 @@ export default function TripForm() {
         />
       </label>
       <label className="formStyle">
-        Duration:
-        <input
-          type="number"
-          name="tripLength"
-          value={formData.tripLength}
-          onChange={updateForm}
-        />
-      </label>
-      <label className="formStyle">
-        Budget:
-        <input
-          type="number"
-          name="budget"
-          value={formData.budget}
-          onChange={updateForm}
-        />
-      </label>
-      <label className="formStyle">
         Departure Date:
         <input
           type="date"
@@ -70,11 +52,29 @@ export default function TripForm() {
         />
       </label>
       <label className="formStyle">
+        Return Date:
+        <input
+          type="date"
+          name="returnDate"
+          value={formData.returnDate}
+          onChange={updateForm}
+        />
+      </label>
+      <label className="formStyle">
         Departure Airport:
         <input
           type="text"
           name="departureAirport"
           value={formData.departureAirport}
+          onChange={updateForm}
+        />
+      </label>
+      <label className="formStyle">
+        Budget:
+        <input
+          type="number"
+          name="budget"
+          value={formData.budget}
           onChange={updateForm}
         />
       </label>
