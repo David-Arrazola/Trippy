@@ -63,6 +63,7 @@ USER INPUT:
 - Start Date: ${startDate}
 - Return Date: ${returnDate}
 - Total Budget: ${budget}
+- Trip Length: you have to calculate this by subtracting "Start Date" from "Return Date => ${returnDate} - ${startDate}.  
 
 TASK:
 Create a structured travel itinerary AND determine correct airport codes.
@@ -71,17 +72,23 @@ HARD CONSTRAINTS:
 1. Output MUST be valid JSON only.
 2. Budget must equal ${budget}.
 3. Use realistic travel planning.
+4. Accumulation of days in different hotels/city MUST add up to total trip length
 
 AIRPORT RULES:
 - Convert departureAirport to IATA if needed.
 - Convert destination to closest major airport.
+
+CITY RULES:
+- Per each city, calculate how many days a user should be in that city (given the total length of the trip)
 
 OUTPUT FORMAT (STRICT JSON ONLY):
 
 {
   "trip_summary": {
     "destination": "${destination}",
-    "total_budget": ${budget}
+    "total_budget": ${budget},
+    "trip_length": - Trip Length: you have to calculate this by subtracting "Start Date" from "Return Date => ${returnDate} - ${startDate}.  
+
   },
   "flight": {
     "origin_airport": "IATA",
@@ -93,6 +100,8 @@ OUTPUT FORMAT (STRICT JSON ONLY):
     {
       "name": "string",
       "days": number,
+      "check_in_date": number,
+      "check_out_date": number,
       "allocated_budget": number,
       "budget_per_night": number,
       "highlights": ["string","string","string"]
@@ -113,13 +122,10 @@ OUTPUT FORMAT (STRICT JSON ONLY):
   // -------------------------
   // HOTEL SEARCH
   // -------------------------
-  const firstCity = text.cities?.[0]?.name;
+  const firstCity = text.cities?.[0];
 
   const hotels = await getHotels(firstCity, destination);
-
-  const rankedHotels = rankHotels(hotels, budget);
-
-  console.log("RANKED HOTELS", rankHotels);
+  console.log("HOTELS IN FIRST CITY", hotels);
 
   // -------------------------
   // FLIGHT SEARCH (FIXED)
@@ -132,49 +138,16 @@ OUTPUT FORMAT (STRICT JSON ONLY):
   );
 
   console.log("FLIGHTS TO DESTINATION", flights);
-
-  return {
-    trip: text,
-    flights,
-    hotels: rankedHotels.slice(0, 10),
-  };
 }
 
-/**
- * GOOGLE PLACES HOTELS
- */
 async function getHotels(city, destination) {
-  const query = `hotels in ${city}, ${destination}`;
-
-  const url =
-    `https://maps.googleapis.com/maps/api/place/textsearch/json?query=` +
-    encodeURIComponent(query) +
-    `&key=${process.env.GOOGLE_PLACES_KEY}`;
-
-  const res = await fetch(url);
-  const data = await res.json();
-
-  return data.results || [];
-}
-
-/**
- * HOTEL SCORING SYSTEM (price + rating)
- */
-function rankHotels(hotels, budget) {
-  return hotels
-    .map((hotel) => {
-      const price = hotel?.rate_per_night?.extracted_lowest || 0;
-      const rating = hotel?.overall_rating || 0;
-
-      const priceScore = price > 0 ? 1 / price : 0;
-      const ratingScore = rating / 5;
-
-      return {
-        ...hotel,
-        score: ratingScore * 0.7 + priceScore * 0.3,
-      };
-    })
-    .sort((a, b) => b.score - a.score);
+  const response = await getJson("google_hotels", {
+    api_key: process.env.SERP_API_KEY,
+    q: `Good hotels in ${city.name}, ${destination}`,
+    check_in_date: city.check_in_date,
+    check_out_date: city.check_out_date,
+  });
+  return response;
 }
 
 /**
