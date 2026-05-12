@@ -20,42 +20,44 @@ app.use(express.json());
  */
 app.post("/", async (req, res) => {
   try {
-    const { message, tripState } = req.body;
+    const { userInput, tripState } = req.body;
 
     // -------------------------
     // EXTRACT TRIP DATA
     // -------------------------
-    const extractionPrompt = extractDataPrompt(message);
-
+    const extractionPrompt = extractDataPrompt(userInput, tripState);
     const tripData = await queryOpenAi(extractionPrompt);
 
-    console.log("EXTRACTED TRIP DATA:", tripData);
+    console.log("EXTRACTED TRIP DATA:", tripData); //fix DELETE LATER
 
     // -------------------------
     // DETERMINE IF WE CAN PLAN
     // -------------------------
-    const [canPlan, followUpMessage] = await decideIfEnoughInfo(tripData);
+    const { canPlan, followUpMessage } = await decideIfEnoughInfo(
+      tripData,
+      userInput,
+    );
 
     // -------------------------
-    // GENERATE FULL TRIP
+    // GENERATE TRIP
     // -------------------------
     if (canPlan) {
       const trip = await generateTrip(tripData);
 
-      return res.send({
+      return res.json({
         action: "GENERATE_TRIP",
-        message: followUpMessage,
-        tripData: tripData,
+        followUpMessage: "Generating your itinerary",
+        trip: trip,
       });
     }
 
     // -------------------------
-    // ASK FOLLOW-UP QUESTION
+    // ASK FOLLOW-UP
     // -------------------------
-    return res.send({
+    return res.json({
       action: "ASK_FOLLOWUP",
-      message: followUpMessage,
-      tripData: tripData,
+      followUpMessage,
+      tripData,
     });
   } catch (err) {
     console.error(err);
@@ -74,11 +76,15 @@ async function decideIfEnoughInfo(tripData) {
 
   const response = await queryOpenAi(prompt);
 
-  console.log("PLAN DECISION:", response);
+  console.log("PLAN DECISION:", response); //fix DELETE LATER
 
-  const { action, message } = response;
+  const action = response?.action ?? "ASK_FOLLOWUP";
+  const followUpMessage = response?.followUpQuestion;
 
-  return action === "GENERATE_TRIP" ? [true, message] : [false, message];
+  return {
+    canPlan: action === "GENERATE_TRIP",
+    followUpMessage,
+  };
 }
 
 export default app;

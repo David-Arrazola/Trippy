@@ -4,7 +4,6 @@ import "./TripForm.css";
 
 export default function TripForm() {
   const [userInput, setUserInput] = useState("");
-
   const [tripState, setTripState] = useState({});
 
   const [assistantMessage, setAssistantMessage] = useState(
@@ -24,10 +23,9 @@ export default function TripForm() {
         headers: {
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify({
-          message: userInput,
-          tripState: tripState,
+          userInput,
+          tripState,
         }),
       });
 
@@ -36,24 +34,27 @@ export default function TripForm() {
       console.log("SERVER RESPONSE:", data);
 
       // -------------------------
-      // FOLLOW-UP QUESTION
+      // FOLLOW UP
       // -------------------------
       if (data.action === "ASK_FOLLOWUP") {
-        setAssistantMessage(data.message);
+        if (data.followUpMessage) {
+          setAssistantMessage(data.followUpMessage);
+        }
 
-        setTripState(data.tripData);
+        if (data.tripData) {
+          setTripState(data.tripData);
+        }
       }
 
       // -------------------------
-      // GENERATED TRIP
+      // GENERATE TRIP
       // -------------------------
       if (data.action === "GENERATE_TRIP") {
-        setAssistantMessage("Generating your itinerary!");
+        setAssistantMessage("Generating your itinerary...");
 
         console.log("FULL TRIP:", data.trip);
       }
 
-      // Clear user textbox
       setUserInput("");
     } catch (err) {
       console.error(err);
@@ -64,7 +65,6 @@ export default function TripForm() {
     <>
       <section>
         <h2>Assistant:</h2>
-
         <section id="assistantSection">{assistantMessage}</section>
       </section>
 

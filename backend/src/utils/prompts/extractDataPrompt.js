@@ -1,4 +1,4 @@
-function extractDataPrompt(message) {
+function extractDataPrompt(userInput, tripState) {
   const extractQuery = `
         You are an AI travel information extraction engine.
 
@@ -107,7 +107,15 @@ function extractDataPrompt(message) {
         }
 
         USER MESSAGE:
-        "${message}"
+        "${userInput}"
+
+        I will also provide the current state/memory of the trip, as in the current fields
+        filled out. I would like for you to add in the new extracted fields from the "userInput" 
+        into the tripState object please. And that is what I want you to return, the newly updated
+        tripState.
+        
+        TRIP STATE:
+        ${JSON.stringify(tripState, null, 2)}
 
         RETURN JSON ONLY`;
   return extractQuery;
