@@ -42,8 +42,8 @@ app.post("/", async (req, res) => {
     // GENERATE TRIP
     // -------------------------
     if (canPlan) {
+      console.log("THIS IS THE TRIPDATA", tripData); //fix DELETE
       const trip = await generateTrip(tripData);
-
       return res.json({
         action: "GENERATE_TRIP",
         followUpMessage: "Generating your itinerary",
@@ -71,14 +71,14 @@ app.post("/", async (req, res) => {
 /**
  * DECIDES IF WE HAVE ENOUGH INFO
  */
-async function decideIfEnoughInfo(tripData) {
-  const prompt = canPlanTripPrompt(tripData);
+async function decideIfEnoughInfo(tripData, userInput) {
+  const prompt = canPlanTripPrompt(tripData, userInput);
 
   const response = await queryOpenAi(prompt);
 
   console.log("PLAN DECISION:", response); //fix DELETE LATER
 
-  const action = response?.action ?? "ASK_FOLLOWUP";
+  const action = response?.action;
   const followUpMessage = response?.followUpQuestion;
 
   return {

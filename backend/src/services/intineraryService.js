@@ -1,25 +1,16 @@
 import generatePrompt from "../utils/prompts/itineraryPrompt.js";
-import dotenv from "dotenv";
-import OpenAI from "openai";
 import getHotels from "./hotelService.js";
 import searchFlights from "./flightService.js";
+import queryOpenAi from "./openai/queryOpenAi.js";
 
-dotenv.config();
 /**
  * AI TRIP GENERATION
  */
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 async function generateTrip(tripData) {
   const query = generatePrompt(tripData);
 
-  const response = await openai.responses.create({
-    model: "gpt-5.4-mini",
-    input: query,
-  });
+  const response = await queryOpenAi(query);
 
   const gptText = JSON.parse(response.output_text);
 

@@ -24,7 +24,6 @@ function extractDataPrompt(userInput, tripState) {
         - startDate
         - returnDate
         - transportation
-        - travelStyle
         - activities
 
         FIELD DEFINITIONS:
@@ -59,14 +58,6 @@ function extractDataPrompt(userInput, tripState) {
         - "bus"
         - null
 
-        travelStyle:
-        Type of trip vibe.
-        Possible values:
-        - "budget"
-        - "balanced"
-        - "luxury"
-        - null
-
         activities:
         Array of activities or interests user mentions.
 
@@ -85,7 +76,6 @@ function extractDataPrompt(userInput, tripState) {
         "startDate": null,
         "returnDate": null,
         "transportation": "plane",
-        "travelStyle": "balanced",
         "activities": []
         }
 
@@ -102,7 +92,6 @@ function extractDataPrompt(userInput, tripState) {
         "startDate": null,
         "returnDate": null,
         "transportation": null,
-        "travelStyle": null,
         "activities": ["beaches", "hiking"]
         }
 

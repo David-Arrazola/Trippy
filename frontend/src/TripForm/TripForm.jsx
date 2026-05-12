@@ -30,9 +30,6 @@ export default function TripForm() {
       });
 
       const data = await response.json();
-
-      console.log("SERVER RESPONSE:", data);
-
       // -------------------------
       // FOLLOW UP
       // -------------------------
