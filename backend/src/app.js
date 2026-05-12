@@ -1,7 +1,8 @@
 import cors from "cors";
 import express from "express";
 import dotenv from "dotenv";
-import generateTrip from "./services/intineraryService.js";
+import generateTrip from "./services/openai/intineraryService.js";
+import extractTripData from "./services/openai/extractTripData.js";
 
 const app = express();
 
@@ -13,24 +14,10 @@ app.use(express.json());
  */
 app.post("/", async (req, res) => {
   try {
-    const { destination, startDate, returnDate, departureAirport, budget } =
-      req.body;
+    const { message } = req.body;
 
-    if (!startDate || !returnDate) {
-      return res.status(400).json({
-        error: "startDate and returnDate are required",
-      });
-    }
-
-    const result = await generateTrip({
-      destination: destination,
-      startDate: startDate,
-      returnDate: returnDate,
-      departureAirport: departureAirport,
-      budget: Number(budget),
-    });
-
-    res.json(result);
+    const tripData = await extractTripData(message);
+    console.log("THIS IS THE TRIP DATA", tripData);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to generate trip" });

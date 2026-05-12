@@ -1,8 +1,8 @@
-import generatePrompt from "../utils/openaiPrompt.js";
+import generatePrompt from "../../utils/prompts/itineraryPrompt.js";
 import dotenv from "dotenv";
 import OpenAI from "openai";
-import getHotels from "./hotelService.js";
-import searchFlights from "./flightService.js";
+import getHotels from "../hotelService.js";
+import searchFlights from "../flightService.js";
 
 dotenv.config();
 /**

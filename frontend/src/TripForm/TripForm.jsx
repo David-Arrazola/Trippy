@@ -3,20 +3,10 @@ import { useState } from "react";
 import "./TripForm.css";
 
 export default function TripForm() {
-  const [formData, setFormData] = useState({
-    destination: "",
-    startDate: "",
-    returnDate: "",
-    departureAirport: "",
-    budget: "",
-  });
+  const [message, setMessage] = useState("");
 
-  const updateForm = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const updateMessage = (event) => {
+    setMessage(event.target.value);
   };
 
   const handleSubmit = async (event) => {
@@ -27,55 +17,18 @@ export default function TripForm() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({ message }),
     });
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <label className="formStyle">
-        Destination:
-        <input
-          type="text"
+        <textarea
+          placeholder="Where do you want to go?"
           name="destination"
-          value={formData.destination}
-          onChange={updateForm}
-        />
-      </label>
-      <label className="formStyle">
-        Departure Date:
-        <input
-          type="date"
-          name="startDate"
-          value={formData.startDate}
-          onChange={updateForm}
-        />
-      </label>
-      <label className="formStyle">
-        Return Date:
-        <input
-          type="date"
-          name="returnDate"
-          value={formData.returnDate}
-          onChange={updateForm}
-        />
-      </label>
-      <label className="formStyle">
-        Departure Airport:
-        <input
-          type="text"
-          name="departureAirport"
-          value={formData.departureAirport}
-          onChange={updateForm}
-        />
-      </label>
-      <label className="formStyle">
-        Budget:
-        <input
-          type="number"
-          name="budget"
-          value={formData.budget}
-          onChange={updateForm}
+          value={message}
+          onChange={updateMessage}
         />
       </label>
       <button type="submit">Generate Trip</button>
