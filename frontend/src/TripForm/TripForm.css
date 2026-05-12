@@ -6,3 +6,11 @@ form > label {
   width: fit-content;
   justify-self: center;
 }
+
+#assistantSection {
+  justify-self: center;
+  background-color: lightgrey;
+  border-radius: 20px;
+  width: 30%;
+  align-content: center;
+}

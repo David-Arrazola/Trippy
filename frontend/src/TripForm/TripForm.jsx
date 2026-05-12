@@ -3,35 +3,83 @@ import { useState } from "react";
 import "./TripForm.css";
 
 export default function TripForm() {
-  const [message, setMessage] = useState("");
+  const [userInput, setUserInput] = useState("");
+
+  const [tripState, setTripState] = useState({});
+
+  const [assistantMessage, setAssistantMessage] = useState(
+    "Where do you want to go?",
+  );
 
   const updateMessage = (event) => {
-    setMessage(event.target.value);
+    setUserInput(event.target.value);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    await fetch(API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message }),
-    });
+    try {
+      const response = await fetch(API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          message: userInput,
+          tripState: tripState,
+        }),
+      });
+
+      const data = await response.json();
+
+      console.log("SERVER RESPONSE:", data);
+
+      // -------------------------
+      // FOLLOW-UP QUESTION
+      // -------------------------
+      if (data.action === "ASK_FOLLOWUP") {
+        setAssistantMessage(data.message);
+
+        setTripState(data.tripData);
+      }
+
+      // -------------------------
+      // GENERATED TRIP
+      // -------------------------
+      if (data.action === "GENERATE_TRIP") {
+        setAssistantMessage("Generating your itinerary!");
+
+        console.log("FULL TRIP:", data.trip);
+      }
+
+      // Clear user textbox
+      setUserInput("");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label className="formStyle">
-        <textarea
-          placeholder="Where do you want to go?"
-          name="destination"
-          value={message}
-          onChange={updateMessage}
-        />
-      </label>
-      <button type="submit">Generate Trip</button>
-    </form>
+    <>
+      <section>
+        <h2>Assistant:</h2>
+
+        <section id="assistantSection">{assistantMessage}</section>
+      </section>
+
+      <form onSubmit={handleSubmit}>
+        <label className="formStyle">
+          User Input:
+          <textarea
+            placeholder="Enter your response here!"
+            value={userInput}
+            onChange={updateMessage}
+          />
+        </label>
+
+        <button type="submit">Send</button>
+      </form>
+    </>
   );
 }
