@@ -12,7 +12,7 @@ async function generateTrip(tripData) {
 
   const gptText = await queryOpenAi(query);
 
-  console.log("AI RESULT:", gptText);
+  console.log("AI RESULT:", gptText); //fix DELETE LATER
 
   // =====================================================
   // HOTEL SEARCH LOGIC
@@ -24,7 +24,7 @@ async function generateTrip(tripData) {
     tripData.startDate && tripData.returnDate && gptText.cities?.length > 0;
 
   if (canSearchHotels) {
-    console.log("SEARCHING HOTELS...");
+    console.log("SEARCHING HOTELS..."); //fix DELETE LATER
 
     for (const city of gptText.cities) {
       try {
@@ -50,7 +50,7 @@ async function generateTrip(tripData) {
 
           maxPrice = Math.floor(cityBudget / city.days);
 
-          console.log(`MAX HOTEL PRICE PER NIGHT FOR ${city.name}:`, maxPrice);
+          console.log(`MAX HOTEL PRICE PER NIGHT FOR ${city.name}:`, maxPrice); //fix DELETE LATER
         }
 
         const hotels = await getHotels({
@@ -89,14 +89,15 @@ async function generateTrip(tripData) {
     tripData.returnDate;
 
   if (canSearchFlights) {
-    flights = await searchFlights(
-      gptText.flight.origin_airport,
-      gptText.flight.destination_airport,
-      tripData.startDate,
-      tripData.returnDate,
-    );
+    flights = await searchFlights({
+      origin: gptText.flight.origin_airport,
+      destination: gptText.flight.destination_airport,
+      startDate: tripData.startDate,
+      returnDate: tripData.returnDate,
+      budget: tripData.budget,
+    });
 
-    console.log("FLIGHTS:", flights);
+    console.log("FLIGHTS:", flights); //fix DELETE LATER
   }
 
   // =====================================================
