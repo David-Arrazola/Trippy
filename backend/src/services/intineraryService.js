@@ -10,9 +10,7 @@ import queryOpenAi from "./openai/queryOpenAi.js";
 async function generateTrip(tripData) {
   const query = generatePrompt(tripData);
 
-  const response = await queryOpenAi(query);
-
-  const gptText = JSON.parse(response.output_text);
+  const gptText = await queryOpenAi(query);
 
   console.log("AI RESULT:", gptText); //FIX DELETE LATER
 

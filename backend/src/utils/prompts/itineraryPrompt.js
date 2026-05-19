@@ -1,24 +1,24 @@
 function generatePrompt(tripData) {
-  const { destination, startDate, returnDate, departureAirport, budget } =
-    tripData;
-
   const query = `
     You are a precise AI travel planning engine.
 
     USER INPUT:
-    - Destination: ${destination}
-    - Departure Airport: ${departureAirport}
-    - Start Date: ${startDate}
-    - Return Date: ${returnDate}
-    - Total Budget: ${budget}
-    - Trip Length: you have to calculate this by subtracting "Start Date" from "Return Date => ${returnDate} - ${startDate}.  
+    - Destination: ${tripData.destination}
+    - Cities: ${tripData.cities}
+    - Duration: ${tripData.duration}
+    - Budget for trip: ${tripData.budget}
+    - Departure Airport: ${tripData.departureAirport}
+    - Start Date: ${tripData.startDate}
+    - Return Date: ${tripData.returnDate}
+    - Trip Length: you have to calculate this by subtracting "Start Date" from "Return Date => ${tripData.returnDate} - ${tripData.startDate}.
+     ---> This calculation is only needed if a "trip duration" is not right out provided  
 
     TASK:
     Create a structured travel itinerary AND determine correct airport codes.
 
     HARD CONSTRAINTS:
     1. Output MUST be valid JSON only.
-    2. Budget must equal ${budget}.
+    2. Budget must equal ${tripData.budget}.
     3. Use realistic travel planning.
     4. Accumulation of days in different hotels/city MUST add up to total trip length
 
@@ -28,21 +28,23 @@ function generatePrompt(tripData) {
 
     CITY RULES:
     - Per each city, calculate how many days a user should be in that city (given the total length of the trip)
+    - VERY IMPORTANT!! IF no cities are provided by the user, then YOU must recommend cities to go to in their destination,
+      AND the time per city should all add up to their trip duration
 
     OUTPUT FORMAT (STRICT JSON ONLY):
 
     {
     "trip_summary": {
-        "destination": "${destination}",
-        "total_budget": ${budget},
-        "trip_length": - Trip Length: you have to calculate this by subtracting "Start Date" from "Return Date => ${returnDate} - ${startDate}.  
+        "destination": "${tripData.destination}",
+        "total_budget": ${tripData.budget},
+        "trip_length": - Trip Length: you have to calculate this by subtracting "Start Date" from "Return Date => ${tripData.returnDate} - ${tripData.startDate}.  
 
     },
     "flight": {
         "origin_airport": "IATA",
         "destination_airport": "IATA",
-        "start_date": "${startDate}",
-        "return_date": "${returnDate}"
+        "start_date": "${tripData.startDate}",
+        "return_date": "${tripData.returnDate}"
     },
     "cities": [
         {
