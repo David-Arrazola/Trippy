@@ -64,6 +64,8 @@ async function generateTrip(tripData) {
         // only keep best 2 hotels
         const bestHotels = hotels.slice(0, 2);
 
+        console.log("THESE ARE THE BEST HOTELS", bestHotels); //fix DELETE LATER
+
         hotelsByCity.push({
           city: city.name,
           hotels: bestHotels,
