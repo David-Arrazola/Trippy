@@ -18,8 +18,6 @@ app.use(express.json());
 /**
  * MAIN ROUTE
  */
-//TODO EDIT the itineraryService.js file so it takes in "tripData" correctly.
-//TODO internaryService.js should only recommend cities to trip plan only if user DOESN't specify cities in the prompt
 //TODO QUERY hotels only if user gives a startTripDate and returnTripDate and their budget
 //Todo Query flights only if user says they are flying/departing from a specific airport + what it says in line 23
 app.post("/", async (req, res) => {

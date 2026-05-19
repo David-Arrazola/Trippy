@@ -21,7 +21,7 @@ function canPlanTripPrompt(tripData, userInput) {
     - If only destination exists → ASK follow-up
     - If destination + at least 1 extra detail exists → GENERATE trip (IF you think it's ok, but if YOU think it's better to ask follow up questions for
     more detail and info, then do so)
-    - However, IMPORTANT, if user says to "skip" or surprise them, or make the itinerary with the given info in anyway, then GENERATE_TRIP
+    - However, IMPORTANT, if user says to "skip" or "surprise" them, or make the itinerary with the given info in anyway, then GENERATE_TRIP
 
     TO help you decide if you should ask follow up questions or not, the user input will be attached below.
 

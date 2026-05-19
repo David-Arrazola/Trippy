@@ -12,27 +12,100 @@ async function generateTrip(tripData) {
 
   const gptText = await queryOpenAi(query);
 
-  console.log("AI RESULT:", gptText); //FIX DELETE LATER
+  console.log("AI RESULT:", gptText);
 
-  // -------------------------
-  // HOTEL SEARCH
-  // -------------------------
-  const firstCity = gptText.cities?.[0];
+  // =====================================================
+  // HOTEL SEARCH LOGIC
+  // =====================================================
 
-  const hotels = await getHotels(firstCity, tripData.destination);
-  console.log("HOTELS IN FIRST CITY", hotels); //fix DELETE LATER
+  let hotelsByCity = [];
 
-  // -------------------------
-  // FLIGHT SEARCH (FIXED)
-  // -------------------------
-  const flights = await searchFlights(
-    gptText.flight.origin_airport,
-    gptText.flight.destination_airport,
-    tripData.startDate,
-    tripData.returnDate,
-  );
+  const canSearchHotels =
+    tripData.startDate && tripData.returnDate && gptText.cities?.length > 0;
 
-  console.log("FLIGHTS TO DESTINATION", flights); //fix DELETE LATER
+  if (canSearchHotels) {
+    console.log("SEARCHING HOTELS...");
+
+    for (const city of gptText.cities) {
+      try {
+        // ---------------------------------------------
+        // OPTIONAL BUDGET LOGIC
+        // ---------------------------------------------
+
+        let maxPrice = null;
+
+        if (tripData.budget && city.days) {
+          // Example:
+          // 5000 total budget
+          // 10 day trip
+          // 5 days in Tokyo
+          //
+          // Allocate proportional hotel budget
+
+          const estimatedHotelBudget = tripData.budget * 0.35;
+
+          const cityBudget =
+            (estimatedHotelBudget / gptText.trip_summary.trip_length) *
+            city.days;
+
+          maxPrice = Math.floor(cityBudget / city.days);
+
+          console.log(`MAX HOTEL PRICE PER NIGHT FOR ${city.name}:`, maxPrice);
+        }
+
+        const hotels = await getHotels({
+          cityName: city.name,
+          destination: tripData.destination,
+          checkInDate: city.check_in_date,
+          checkOutDate: city.check_out_date,
+          maxPrice,
+        });
+
+        // only keep best 2 hotels
+        const bestHotels = hotels.slice(0, 2);
+
+        hotelsByCity.push({
+          city: city.name,
+          hotels: bestHotels,
+        });
+      } catch (err) {
+        console.error(`HOTEL ERROR FOR ${city.name}`, err);
+      }
+    }
+  }
+
+  // =====================================================
+  // FLIGHT SEARCH
+  // =====================================================
+
+  let flights = null;
+
+  const canSearchFlights =
+    gptText.flight?.origin_airport &&
+    gptText.flight?.destination_airport &&
+    tripData.startDate &&
+    tripData.returnDate;
+
+  if (canSearchFlights) {
+    flights = await searchFlights(
+      gptText.flight.origin_airport,
+      gptText.flight.destination_airport,
+      tripData.startDate,
+      tripData.returnDate,
+    );
+
+    console.log("FLIGHTS:", flights);
+  }
+
+  // =====================================================
+  // FINAL RESPONSE
+  // =====================================================
+
+  return {
+    itinerary: gptText,
+    hotels: hotelsByCity,
+    flights,
+  };
 }
 
 export default generateTrip;
