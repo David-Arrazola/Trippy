@@ -2,6 +2,7 @@ import generatePrompt from "../utils/prompts/itineraryPrompt.js";
 import getHotels from "./hotelService.js";
 import searchFlights from "./flightService.js";
 import queryOpenAi from "./openai/queryOpenAi.js";
+import geocodeCities from "./geocodeService.js";
 
 /**
  * AI TRIP GENERATION
@@ -12,6 +13,7 @@ async function generateTrip(tripData) {
 
   const gptText = await queryOpenAi(query);
 
+  gptText.cities = await geocodeCities(gptText.cities, tripData.destination);
   console.log("AI RESULT:", gptText); //fix DELETE LATER
 
   // =====================================================
