@@ -1,4 +1,4 @@
-import TripForm from "./components/TripForm/TripForm.jsx";
+import TripForm from "../components/TripForm/TripForm.jsx";
 
 function App() {
   return (
