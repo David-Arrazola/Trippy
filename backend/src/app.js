@@ -45,12 +45,12 @@ app.post("/", async (req, res) => {
     // -------------------------
     if (canPlan) {
       console.log("THIS IS THE TRIPDATA", tripData); //fix DELETE
-      const trip = await generateTrip(tripData);
+      const tripResult = await generateTrip(tripData);
 
       return res.json({
         action: "GENERATE_TRIP",
         followUpMessage: "Generating your itinerary",
-        trip: trip,
+        trip: tripResult,
       });
     }
 
@@ -60,7 +60,7 @@ app.post("/", async (req, res) => {
     return res.json({
       action: "ASK_FOLLOWUP",
       followUpMessage,
-      tripData,
+      trip: tripData,
     });
   } catch (err) {
     console.error(err);
