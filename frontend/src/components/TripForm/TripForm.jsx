@@ -1,17 +1,14 @@
 const API = import.meta.env.VITE_API_URL;
-
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "./TripForm.css";
 
 export default function TripForm() {
   const [userInput, setUserInput] = useState("");
   const [tripState, setTripState] = useState({});
+
   const [assistantMessage, setAssistantMessage] = useState(
     "Where do you want to go?",
   );
-
-  const navigate = useNavigate();
 
   const updateMessage = (event) => {
     setUserInput(event.target.value);
@@ -33,11 +30,8 @@ export default function TripForm() {
       });
 
       const data = await response.json();
-
-      console.log("SERVER RESPONSE:", data);
-
       // -------------------------
-      // FOLLOW UP QUESTION
+      // FOLLOW UP
       // -------------------------
       if (data.action === "ASK_FOLLOWUP") {
         if (data.followUpMessage) {
@@ -50,17 +44,12 @@ export default function TripForm() {
       }
 
       // -------------------------
-      // GENERATE TRIP → NAVIGATE
+      // GENERATE TRIP
       // -------------------------
       if (data.action === "GENERATE_TRIP") {
         setAssistantMessage("Generating your itinerary...");
 
-        console.log("FULL TRIP:", data.tripData);
-
-        // 👉 NAVIGATE TO RESULTS PAGE
-        navigate("/trip-results", {
-          state: data.tripData,
-        });
+        console.log("FULL TRIP:", data.trip);
       }
 
       setUserInput("");
