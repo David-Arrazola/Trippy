@@ -111,8 +111,7 @@ export default function TripForm() {
       <section className="chatBox">
         {messages.map((msg, index) => (
           <div key={index} className={`chatMessage ${msg.role}`}>
-            <strong>{msg.role === "user" ? "Me" : "Trippy"}:</strong>{" "}
-            {msg.content}
+            <strong>{msg.role === "user" ? "Me" : "Red"}:</strong> {msg.content}
           </div>
         ))}
       </section>
