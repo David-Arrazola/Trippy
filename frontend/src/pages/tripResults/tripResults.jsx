@@ -9,7 +9,7 @@ import {
   useJsApiLoader,
 } from "@react-google-maps/api";
 
-// import "./TripResults.css";
+import "./TripResults.css";
 
 const mapContainerStyle = {
   width: "100%",
@@ -88,10 +88,6 @@ export default function TripResults() {
   // -----------------------------------
 
   console.log("TRIP STATE:", tripState);
-  console.log("VALID CITIES:", validCities);
-  console.log("MAP LOADED:", isLoaded);
-  console.log("GOOGLE KEY:", import.meta.env.VITE_GOOGLE_MAPS_KEY);
-
   // -----------------------------------
   // LOAD ERROR
   // -----------------------------------
@@ -197,20 +193,54 @@ export default function TripResults() {
 
           {/* FLIGHTS */}
 
-          {flights?.bestFlights?.length > 0 && (
+          {/* FLIGHTS */}
+
+          {flights?.length > 0 && (
             <div className="card">
               <h2>Flights</h2>
 
-              {flights.bestFlights.slice(0, 2).map((flight, i) => (
-                <div key={i}>
-                  <p>${flight.price}</p>
+              {flights.slice(0, 2).map((flight, i) => (
+                <div key={i} className="flightCard">
+                  {/* airline */}
+                  <div>
+                    <img
+                      src={flight.airline_logo}
+                      alt="airline logo"
+                      width="50"
+                    />
 
+                    <p>{flight.flights?.[0]?.airline}</p>
+                  </div>
+
+                  {/* price */}
+                  <p>
+                    <strong>${flight.price}</strong>
+                  </p>
+
+                  {/* duration */}
                   <p>
                     {Math.floor(flight.total_duration / 60)}h{" "}
                     {flight.total_duration % 60}m
                   </p>
 
+                  {/* stops */}
                   <p>{flight.layovers?.length || 0} stops</p>
+
+                  {/* flight path */}
+                  <div>
+                    {flight.flights.map((segment, index) => (
+                      <div key={index}>
+                        <p>
+                          {segment.departure_airport.id} →{" "}
+                          {segment.arrival_airport.id}
+                        </p>
+
+                        <p>
+                          {segment.airline} • {segment.airplane}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
