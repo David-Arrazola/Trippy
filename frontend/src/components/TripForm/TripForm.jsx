@@ -15,6 +15,22 @@ export default function TripForm() {
 
   const navigate = useNavigate();
 
+  const streamMessage = (message) => {
+    let index = 0;
+
+    setAssistantMessage("");
+
+    const interval = setInterval(() => {
+      setAssistantMessage(message.slice(0, index));
+
+      index++;
+
+      if (index > message.length) {
+        clearInterval(interval);
+      }
+    }, 15);
+  };
+
   const updateMessage = (event) => {
     setUserInput(event.target.value);
   };
@@ -41,7 +57,7 @@ export default function TripForm() {
       // -------------------------
       if (data.action === "ASK_FOLLOWUP") {
         if (data.followUpMessage) {
-          setAssistantMessage(data.followUpMessage);
+          streamMessage(data.followUpMessage);
         }
 
         if (data.trip) {
@@ -53,7 +69,7 @@ export default function TripForm() {
       // GENERATE TRIP
       // -------------------------
       if (data.action === "GENERATE_TRIP") {
-        setAssistantMessage("Generating your itinerary...");
+        streamMessage("Generating your itinerary...");
 
         if (data.trip) {
           setTripState(data.trip);
