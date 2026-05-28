@@ -52,15 +52,17 @@ export default function TripForm() {
       // -------------------------
       // GENERATE TRIP
       // -------------------------
-      if (data.action === "GENERATE_TRIP" && data.trip) {
+      if (data.action === "GENERATE_TRIP") {
         setAssistantMessage("Generating your itinerary...");
 
-        setTripState(data.trip);
+        if (data.trip) {
+          setTripState(data.trip);
 
-        console.log("FULL TRIP:", data.trip);
+          //TODO REACHING HERE BUT NOT NAVIGATING
 
-        // Navigating to results page
-        navigate("/trip-results");
+          // Navigating to results page
+          navigate("/trip-results");
+        }
       }
 
       setUserInput("");

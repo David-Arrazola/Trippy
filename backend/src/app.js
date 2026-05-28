@@ -30,8 +30,6 @@ app.post("/", async (req, res) => {
     const extractionPrompt = extractDataPrompt(userInput, tripState);
     const tripData = await queryOpenAi(extractionPrompt);
 
-    console.log("EXTRACTED TRIP DATA:", tripData); //fix DELETE LATER
-
     // -------------------------
     // DETERMINE IF WE CAN PLAN
     // -------------------------
@@ -44,7 +42,6 @@ app.post("/", async (req, res) => {
     // GENERATE TRIP
     // -------------------------
     if (canPlan) {
-      console.log("THIS IS THE TRIPDATA", tripData); //fix DELETE
       const tripResult = await generateTrip(tripData);
 
       return res.json({
@@ -78,8 +75,6 @@ async function decideIfEnoughInfo(tripData, userInput) {
   const prompt = canPlanTripPrompt(tripData, userInput);
 
   const response = await queryOpenAi(prompt);
-
-  console.log("PLAN DECISION:", response); //fix DELETE LATER
 
   const action = response?.action;
   const followUpMessage = response?.followUpQuestion;
