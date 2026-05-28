@@ -1,30 +1,81 @@
 .tripResultsContainer {
   min-height: 100vh;
-  padding: 2rem;
-  background-color: #416dd5;
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
+  padding: 3rem 4rem;
+  color: #f8fafc;
+  font-family: "Inter", sans-serif;
+
+  /* CLEAN MODERN BACKGROUND */
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(59, 130, 246, 0.25),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(168, 85, 247, 0.18),
+      transparent 30%
+    ),
+    linear-gradient(135deg, #07111f 0%, #0f172a 45%, #111827 100%);
 }
 
+/* ================================= */
+/* HEADER */
+/* ================================= */
+
 .tripResultsContainer header {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .tripResultsContainer h1 {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -2px;
+  margin-bottom: 0.75rem;
+
+  line-height: 1.15;
+  padding-bottom: 0.2rem;
+
+  background: linear-gradient(to right, #ffffff, #93c5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .tripResultsContainer header p {
-  color: #cbd5e1;
+  color: #94a3b8;
   font-size: 1.1rem;
+  font-weight: 500;
 }
+
+/* ================================= */
+/* MAIN LAYOUT */
+/* ================================= */
 
 .tripLayout {
   display: grid;
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: 1fr 380px;
   gap: 2rem;
   align-items: start;
+}
+
+/* ================================= */
+/* GLASS EFFECT */
+/* ================================= */
+
+.mapSection,
+.card {
+  background: rgba(15, 23, 42, 0.7);
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  border-radius: 24px;
 }
 
 /* ================================= */
@@ -32,20 +83,23 @@
 /* ================================= */
 
 .mapSection {
-  background-color: #1e293b;
-  padding: 1rem;
-  border-radius: 16px;
+  padding: 1.5rem;
 }
 
 .mapSection h2 {
+  font-size: 1.4rem;
   margin-bottom: 1rem;
+  font-weight: 700;
+  color: aquamarine;
 }
 
 .mapWrapper {
   width: 100%;
-  height: 500px;
-  border-radius: 12px;
+  height: 600px;
+  border-radius: 18px;
   overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* ================================= */
@@ -63,39 +117,111 @@
 /* ================================= */
 
 .card {
-  background-color: #1e293b;
-  padding: 1rem;
-  border-radius: 16px;
+  padding: 1.4rem;
+  transition: all 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(59, 130, 246, 0.08);
 }
 
 .card h2 {
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: aquamarine;
 }
 
 .card h3 {
-  margin-bottom: 0.3rem;
-  color: #38bdf8;
+  margin-bottom: 0.4rem;
+  color: #60a5fa;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .card p {
   color: #cbd5e1;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.45rem;
+  line-height: 1.5;
+}
+
+/* ================================= */
+/* CITY/HOTEL/FLIGHT ITEMS */
+/* ================================= */
+
+.card > div > div {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.card > div > div:last-child {
+  border-bottom: none;
+}
+
+/* ================================= */
+/* FLIGHT PRICE */
+/* ================================= */
+
+.flightPrice {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+/* ================================= */
+/* SCROLLBAR */
+/* ================================= */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
 
 /* ================================= */
 /* MOBILE */
 /* ================================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .tripLayout {
     grid-template-columns: 1fr;
   }
 
   .mapWrapper {
-    height: 400px;
+    height: 420px;
   }
 
+  .tripResultsContainer {
+    padding: 2rem 1.25rem;
+  }
+}
+
+@media (max-width: 640px) {
   .tripResultsContainer h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
+  }
+
+  .mapWrapper {
+    height: 350px;
+  }
+
+  .card,
+  .mapSection {
+    border-radius: 18px;
   }
 }

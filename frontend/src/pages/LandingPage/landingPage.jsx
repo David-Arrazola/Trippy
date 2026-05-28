@@ -18,7 +18,7 @@ function LandingPage() {
 
           <p className="heroDescription">
             Describe your dream trip in plain English and let AI build your
-            itinerary, flights, hotels, and interactive route map instantly.
+            itinerary, including:
           </p>
 
           {/* FEATURES */}
