@@ -193,42 +193,40 @@ export default function TripResults() {
 
           {/* FLIGHTS */}
 
-          {/* FLIGHTS */}
-
           {flights?.length > 0 && (
             <div className="card">
               <h2>Flights</h2>
 
-              {flights.slice(0, 2).map((flight, i) => (
+              {flights.map((currFlight, i) => (
                 <div key={i} className="flightCard">
                   {/* airline */}
                   <div>
                     <img
-                      src={flight.airline_logo}
+                      src={currFlight.airline_logo}
                       alt="airline logo"
                       width="50"
                     />
 
-                    <p>{flight.flights?.[0]?.airline}</p>
+                    <p>{currFlight.flights?.[0]?.airline}</p>
                   </div>
 
                   {/* price */}
                   <p>
-                    <strong>${flight.price}</strong>
+                    <strong>${currFlight.price}</strong>
                   </p>
 
                   {/* duration */}
                   <p>
-                    {Math.floor(flight.total_duration / 60)}h{" "}
-                    {flight.total_duration % 60}m
+                    {Math.floor(currFlight.total_duration / 60)}h{" "}
+                    {currFlight.total_duration % 60}m
                   </p>
 
                   {/* stops */}
-                  <p>{flight.layovers?.length || 0} stops</p>
+                  <p>{currFlight.layovers?.length || 0} stops</p>
 
-                  {/* flight path */}
+                  {/* currFlight path */}
                   <div>
-                    {flight.flights.map((segment, index) => (
+                    {currFlight.flights.map((segment, index) => (
                       <div key={index}>
                         <p>
                           {segment.departure_airport.id} →{" "}

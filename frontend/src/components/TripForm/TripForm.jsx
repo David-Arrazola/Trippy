@@ -58,8 +58,6 @@ export default function TripForm() {
         if (data.trip) {
           setTripState(data.trip);
 
-          //TODO REACHING HERE BUT NOT NAVIGATING
-
           // Navigating to results page
           navigate("/trip-results");
         }

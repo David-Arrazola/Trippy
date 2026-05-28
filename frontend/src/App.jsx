@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/LandingPage.jsx";
+import LandingPage from "./pages/LandingPage/landingPage.jsx";
 import TripResults from "./pages/TripResults/TripResults.jsx";
 
 function App() {
