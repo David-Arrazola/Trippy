@@ -9,23 +9,35 @@ export default function TripForm() {
   const [userInput, setUserInput] = useState("");
   const { tripState, setTripState } = useTrip();
 
-  const [assistantMessage, setAssistantMessage] = useState(
-    "Where do you want to go?",
-  );
+  // 👇 CHAT HISTORY (this is the big change)
+  const [messages, setMessages] = useState([
+    { role: "assistant", content: "Where do you want to go?" },
+  ]);
 
   const navigate = useNavigate();
 
+  // STREAMING FUNCTION
   const streamMessage = (message) => {
     let index = 0;
 
-    setAssistantMessage("");
+    setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
     const interval = setInterval(() => {
-      setAssistantMessage(message.slice(0, index));
-
       index++;
 
-      if (index > message.length) {
+      setMessages((prev) => {
+        const copy = [...prev];
+        const last = copy[copy.length - 1];
+
+        copy[copy.length - 1] = {
+          ...last,
+          content: message.slice(0, index),
+        };
+
+        return copy;
+      });
+
+      if (index >= message.length) {
         clearInterval(interval);
       }
     }, 15);
@@ -38,6 +50,15 @@ export default function TripForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!userInput.trim()) return;
+
+    // 1. Add user message to chat
+    const userMessage = userInput;
+
+    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
+
+    setUserInput("");
+
     try {
       const response = await fetch(API, {
         method: "POST",
@@ -45,7 +66,7 @@ export default function TripForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userInput,
+          userInput: userMessage,
           tripState,
         }),
       });
@@ -74,12 +95,11 @@ export default function TripForm() {
         if (data.trip) {
           setTripState(data.trip);
 
-          // Navigating to results page
-          navigate("/trip-results");
+          setTimeout(() => {
+            navigate("/trip-results");
+          }, 1000);
         }
       }
-
-      setUserInput("");
     } catch (err) {
       console.error(err);
     }
@@ -87,20 +107,23 @@ export default function TripForm() {
 
   return (
     <>
-      <section>
-        <h2>Assistant:</h2>
-        <section id="assistantSection">{assistantMessage}</section>
+      {/* CHAT WINDOW */}
+      <section className="chatBox">
+        {messages.map((msg, index) => (
+          <div key={index} className={`chatMessage ${msg.role}`}>
+            <strong>{msg.role === "user" ? "Me" : "Trippy"}:</strong>{" "}
+            {msg.content}
+          </div>
+        ))}
       </section>
 
+      {/* INPUT */}
       <form onSubmit={handleSubmit}>
-        <label className="formStyle">
-          User Input:
-          <textarea
-            placeholder="Enter your response here!"
-            value={userInput}
-            onChange={updateMessage}
-          />
-        </label>
+        <textarea
+          placeholder="Enter your response..."
+          value={userInput}
+          onChange={updateMessage}
+        />
 
         <button type="submit">Send</button>
       </form>
