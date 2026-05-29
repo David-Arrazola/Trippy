@@ -25,7 +25,7 @@ async function getHotels({
   };
 
   // -----------------------------------------
-  // ONLY APPLY PRICE FILTER IF BUDGET EXISTS
+  // OPTIONAL PRICE FILTER
   // -----------------------------------------
 
   if (maxPrice) {
@@ -34,7 +34,49 @@ async function getHotels({
 
   const response = await getJson(params);
 
-  return response.properties || [];
+  const hotels = response.properties || [];
+
+  // =====================================================
+  // FILTER BAD RESULTS
+  // =====================================================
+
+  const filteredHotels = hotels.filter((hotel) => {
+    const hasName = hotel.name;
+
+    const hasPrice = hotel.rate_per_night?.lowest || hotel.total_rate?.lowest;
+
+    const hasRating = hotel.overall_rating;
+
+    const validRating = hotel.overall_rating >= 3.0;
+
+    return hasName && hasPrice && hasRating && validRating;
+  });
+
+  // =====================================================
+  // SORT BEST HOTELS
+  // =====================================================
+
+  filteredHotels.sort((a, b) => {
+    // prioritize higher rated hotels
+
+    if (b.overall_rating !== a.overall_rating) {
+      return b.overall_rating - a.overall_rating;
+    }
+
+    // then prioritize cheaper hotels
+
+    const priceA = a.rate_per_night?.lowest || a.total_rate?.lowest || Infinity;
+
+    const priceB = b.rate_per_night?.lowest || b.total_rate?.lowest || Infinity;
+
+    return priceA - priceB;
+  });
+
+  // =====================================================
+  // RETURN TOP OPTIONS
+  // =====================================================
+
+  return filteredHotels.slice(0, 12);
 }
 
 export default getHotels;

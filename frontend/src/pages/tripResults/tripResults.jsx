@@ -17,7 +17,6 @@ const mapContainerStyle = {
   height: "500px",
 };
 
-//TODO separate areas like "Hotels" and "Flights" into components in different pages and export them
 //TODO add a feature where user can carosell through hotels and flights so they can choose BUT also include RECOMMEND section where it displays what  the AI recommends. OR they can change to they choose from selection of switch via carosell
 //TODO In map make it so line colors switch per city and identify which city comes first, then second, then third
 

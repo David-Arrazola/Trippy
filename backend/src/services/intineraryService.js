@@ -12,9 +12,11 @@ async function generateTrip(tripData) {
   const query = generatePrompt(tripData);
 
   const gptText = await queryOpenAi(query);
-  console.log("THIS IS THE OUTPUT FROM GPT", gptText); //fix DELETE LATER
+
+  console.log("THIS IS THE OUTPUT FROM GPT", gptText);
 
   gptText.cities = await geocodeCities(gptText.cities, tripData.destination);
+
   // =====================================================
   // HOTEL SEARCH LOGIC
   // =====================================================
@@ -34,13 +36,6 @@ async function generateTrip(tripData) {
         let maxPrice = null;
 
         if (tripData.budget && city.days) {
-          // Example:
-          // 5000 total budget
-          // 10 day trip
-          // 5 days in Tokyo
-          //
-          // Allocate proportional hotel budget
-
           const estimatedHotelBudget = tripData.budget * 0.35;
 
           const cityBudget =
@@ -50,6 +45,10 @@ async function generateTrip(tripData) {
           maxPrice = Math.floor(cityBudget / city.days);
         }
 
+        // ---------------------------------------------
+        // HOTEL SERVICE
+        // ---------------------------------------------
+
         const hotels = await getHotels({
           cityName: city.name,
           destination: tripData.destination,
@@ -58,12 +57,14 @@ async function generateTrip(tripData) {
           maxPrice,
         });
 
-        // only keep best 2 hotels
-        const bestHotels = hotels.slice(0, 2);
-
         hotelsByCity.push({
           city: city.name,
-          hotels: bestHotels,
+
+          // AI recommendation
+          recommended: hotels[0] || null,
+
+          // full filtered list
+          hotels,
         });
       } catch (err) {
         console.error(`HOTEL ERROR FOR ${city.name}`, err);
