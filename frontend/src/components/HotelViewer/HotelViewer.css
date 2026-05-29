@@ -1,12 +1,80 @@
-.card {
-  padding: 1.4rem;
-  border-radius: 24px;
+.hotelCityGroup {
+  margin-bottom: 2rem;
+}
+
+.hotelCityTitle {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+
+  font-size: 1.2rem;
+  font-weight: 700;
+
+  color: #7dd3fc;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .hotelCard {
   margin-top: 1rem;
-  padding: 1rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.04);
+  padding: 1.2rem;
+
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.045);
   border: 1px solid rgba(255, 255, 255, 0.08);
+
+  transition: 0.25s ease;
+}
+
+.hotelCard:hover {
+  transform: translateY(-4px);
+
+  border-color: rgba(56, 189, 248, 0.35);
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(56, 189, 248, 0.08);
+}
+
+.hotelName {
+  margin-bottom: 0.6rem;
+
+  font-size: 1.05rem;
+  font-weight: 700;
+
+  color: white;
+}
+
+.hotelPrice {
+  margin-bottom: 1rem;
+
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.hotelPrice span {
+  color: #38bdf8;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.hotelLink {
+  display: inline-block;
+
+  padding: 0.7rem 1rem;
+
+  border-radius: 12px;
+
+  background: linear-gradient(135deg, #3b82f6, #a855f7);
+
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+
+  transition: 0.2s ease;
+}
+
+.hotelLink:hover {
+  transform: scale(1.03);
+  opacity: 0.92;
 }

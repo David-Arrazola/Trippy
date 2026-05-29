@@ -117,7 +117,7 @@ export default function TripResults() {
       <div className="tripContent">
         {/* MAP */}
 
-        <section className="mapSection">
+        <section className="card">
           <h2>Trip Map</h2>
 
           {!isLoaded ? (

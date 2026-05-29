@@ -1,16 +1,46 @@
+header > h1 {
+  color: aquamarine;
+}
+
+header > p {
+  color: azure;
+  font-size: 20px;
+}
+
+.card {
+  padding: 1.6rem;
+  border-radius: 28px;
+
+  background: rgba(15, 23, 42, 0.72);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  color: white;
+}
+
+.card h2 {
+  font-size: 1.7rem;
+  margin-bottom: 1.8rem;
+
+  font-weight: 800;
+
+  background: linear-gradient(to right, #ffffff, #7dd3fc);
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .tripContent {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-}
-
-/* ============================== */
-/* MAP */
-/* ============================== */
-
-.mapSection {
-  padding: 1.5rem;
-  border-radius: 24px;
 }
 
 /* ============================== */
