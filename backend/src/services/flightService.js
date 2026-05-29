@@ -87,7 +87,7 @@ async function searchFlights({
   // RETURN BEST 2 FLIGHTS
   // ---------------------------------------------
 
-  return filteredFlights.slice(0, 2);
+  return filteredFlights.slice(0, 12);
 }
 
 export default searchFlights;

@@ -1,3 +1,7 @@
+.hotelCityGroup {
+  margin-bottom: 2rem;
+}
+
 .hotelHeader {
   display: flex;
   justify-content: space-between;
@@ -6,20 +10,32 @@
   margin-bottom: 0.75rem;
 }
 
+.hotelHeader h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+
+  color: #7dd3fc;
+}
+
+/* ============================== */
+/* BUTTON */
+/* ============================== */
+
 .browseButton {
   border: none;
 
-  padding: 0.6rem 1rem;
+  padding: 0.55rem 0.9rem;
 
-  border-radius: 12px;
+  border-radius: 10px;
 
   background: rgba(59, 130, 246, 0.15);
 
   color: white;
 
-  cursor: pointer;
-
+  font-size: 0.9rem;
   font-weight: 600;
+
+  cursor: pointer;
 
   transition: 0.2s ease;
 }
@@ -28,18 +44,84 @@
   background: rgba(59, 130, 246, 0.3);
 }
 
+/* ============================== */
+/* AI BADGE */
+/* ============================== */
+
 .recommendBadge {
+  margin-bottom: 1rem;
+
   color: #38bdf8;
 
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* ============================== */
+/* HOTEL CARD */
+/* ============================== */
+
+.hotelCard {
+  padding: 1.2rem;
+
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ============================== */
+/* HOTEL INFO */
+/* ============================== */
+
+.hotelName {
+  font-size: 1.05rem;
   font-weight: 700;
 
-  margin-bottom: 1rem;
+  color: white;
+
+  margin-bottom: 0.5rem;
 }
+
+.hotelPrice {
+  color: #cbd5e1;
+
+  margin-bottom: 0.5rem;
+}
+
+.hotelPrice span {
+  color: #38bdf8;
+  font-weight: 800;
+}
+
+/* ============================== */
+/* LINK */
+/* ============================== */
+
+.hotelLink {
+  display: inline-block;
+
+  margin-top: 0.75rem;
+
+  color: #60a5fa;
+
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.hotelLink:hover {
+  color: white;
+}
+
+/* ============================== */
+/* CAROUSEL */
+/* ============================== */
 
 .carouselButtons {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 
   margin-top: 1rem;
 }
@@ -47,13 +129,31 @@
 .carouselButtons button {
   border: none;
 
+  padding: 0.45rem 0.85rem;
+
+  border-radius: 10px;
+
   background: rgba(255, 255, 255, 0.08);
 
   color: white;
 
-  padding: 0.6rem 1rem;
-
-  border-radius: 10px;
-
   cursor: pointer;
+}
+
+.carouselButtons span {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+/* ============================== */
+/* MOBILE */
+/* ============================== */
+
+@media (max-width: 640px) {
+  .hotelHeader {
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 0.75rem;
+  }
 }
