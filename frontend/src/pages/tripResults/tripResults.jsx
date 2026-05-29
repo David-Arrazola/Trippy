@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTrip } from "../../context/tripContext.jsx";
+import HotelViewer from "../../components/HotelViewer/HotelViewer.jsx";
+import "./TripResults.css";
 
 import {
   GoogleMap,
@@ -8,8 +10,7 @@ import {
   Polyline,
   useJsApiLoader,
 } from "@react-google-maps/api";
-
-import "./TripResults.css";
+import FlightViewer from "../../components/FlightViewer/FlightViewer.jsx";
 
 const mapContainerStyle = {
   width: "100%",
@@ -175,80 +176,11 @@ export default function TripResults() {
         <div className="resultsGrid">
           {/* HOTELS */}
 
-          {hotels?.length > 0 && (
-            <section className="card">
-              <h2>Hotels</h2>
-
-              {hotels.map((group, i) => (
-                <div key={i}>
-                  <h3>{group.city}</h3>
-
-                  {group.hotels?.map((hotel, j) => (
-                    <div key={j} className="hotelCard">
-                      <p>{hotel.name}</p>
-
-                      <p>${hotel.rate_per_night?.lowest || "N/A"} / night</p>
-
-                      {/* future booking link */}
-                      {hotel.link && (
-                        <a href={hotel.link} target="_blank" rel="noreferrer">
-                          View Hotel
-                        </a>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </section>
-          )}
+          {hotels?.length > 0 && <HotelViewer hotels={hotels} />}
 
           {/* FLIGHTS */}
 
-          {flights?.length > 0 && (
-            <section className="card">
-              <h2>Flights</h2>
-
-              {flights.map((currFlight, i) => (
-                <div key={i} className="flightCard">
-                  <div className="flightHeader">
-                    <img
-                      src={currFlight.airline_logo}
-                      alt="airline logo"
-                      width="42"
-                    />
-
-                    <div>
-                      <h3>{currFlight.flights?.[0]?.airline}</h3>
-
-                      <p className="flightPrice">${currFlight.price}</p>
-                    </div>
-                  </div>
-
-                  <p>
-                    {Math.floor(currFlight.total_duration / 60)}h{" "}
-                    {currFlight.total_duration % 60}m
-                  </p>
-
-                  <p>{currFlight.layovers?.length || 0} stops</p>
-
-                  <div className="segments">
-                    {currFlight.flights.map((segment, index) => (
-                      <div key={index} className="segment">
-                        <p>
-                          {segment.departure_airport.id} →{" "}
-                          {segment.arrival_airport.id}
-                        </p>
-
-                        <p>
-                          {segment.airline} • {segment.airplane}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </section>
-          )}
+          {flights?.length > 0 && <FlightViewer flights={flights} />}
         </div>
       </div>
     </div>
