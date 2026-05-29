@@ -58,7 +58,6 @@ async function searchFlights({
     ...(response.best_flights || []),
     ...(response.other_flights || []),
   ];
-
   // ---------------------------------------------
   // REMOVE TERRIBLE FLIGHTS
   // ---------------------------------------------

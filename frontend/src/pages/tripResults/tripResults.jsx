@@ -109,10 +109,8 @@ export default function TripResults() {
         <p>{itinerary?.trip_summary?.trip_length || 0} days</p>
       </header>
 
-      <div className="tripLayout">
-        {/* ================================= */}
+      <div className="tripContent">
         {/* MAP */}
-        {/* ================================= */}
 
         <section className="mapSection">
           <h2>Trip Map</h2>
@@ -125,8 +123,6 @@ export default function TripResults() {
               center={defaultCenter}
               zoom={4}
             >
-              {/* MARKERS */}
-
               {validCities.map((city, index) => (
                 <MarkerF
                   key={index}
@@ -137,8 +133,6 @@ export default function TripResults() {
                   title={city.name}
                 />
               ))}
-
-              {/* POLYLINE */}
 
               {pathCoordinates.length > 1 && (
                 <Polyline
@@ -154,80 +148,88 @@ export default function TripResults() {
           )}
         </section>
 
-        {/* ================================= */}
-        {/* SIDE PANEL */}
-        {/* ================================= */}
+        {/* CITIES */}
 
-        <aside className="sidePanel">
-          {/* CITIES */}
+        <section className="card citiesCard">
+          <h2>Cities</h2>
 
-          <div className="card">
-            <h2>Cities</h2>
-
+          <div className="citiesGrid">
             {cities.map((city, i) => (
-              <div key={i}>
+              <div key={i} className="cityItem">
                 <h3>{city.name}</h3>
+
                 <p>{city.days} days</p>
+
+                <p>${city.allocated_budget}</p>
               </div>
             ))}
           </div>
+        </section>
 
+        {/* HOTEL + FLIGHT GRID */}
+
+        <div className="resultsGrid">
           {/* HOTELS */}
 
-          <div className="card">
-            <h2>Hotels</h2>
+          {hotels?.length > 0 && (
+            <section className="card">
+              <h2>Hotels</h2>
 
-            {hotels.map((group, i) => (
-              <div key={i}>
-                <h3>{group.city}</h3>
+              {hotels.map((group, i) => (
+                <div key={i}>
+                  <h3>{group.city}</h3>
 
-                {group.hotels?.map((hotel, j) => (
-                  <div key={j}>
-                    <p>{hotel.name}</p>
-                    <p>${hotel.rate_per_night?.lowest || "N/A"}</p>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+                  {group.hotels?.map((hotel, j) => (
+                    <div key={j} className="hotelCard">
+                      <p>{hotel.name}</p>
+
+                      <p>${hotel.rate_per_night?.lowest || "N/A"} / night</p>
+
+                      {/* future booking link */}
+                      {hotel.link && (
+                        <a href={hotel.link} target="_blank" rel="noreferrer">
+                          View Hotel
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </section>
+          )}
 
           {/* FLIGHTS */}
 
           {flights?.length > 0 && (
-            <div className="card">
+            <section className="card">
               <h2>Flights</h2>
 
               {flights.map((currFlight, i) => (
                 <div key={i} className="flightCard">
-                  {/* airline */}
-                  <div>
+                  <div className="flightHeader">
                     <img
                       src={currFlight.airline_logo}
                       alt="airline logo"
-                      width="50"
+                      width="42"
                     />
 
-                    <p>{currFlight.flights?.[0]?.airline}</p>
+                    <div>
+                      <h3>{currFlight.flights?.[0]?.airline}</h3>
+
+                      <p className="flightPrice">${currFlight.price}</p>
+                    </div>
                   </div>
 
-                  {/* price */}
-                  <p>
-                    <strong>${currFlight.price}</strong>
-                  </p>
-
-                  {/* duration */}
                   <p>
                     {Math.floor(currFlight.total_duration / 60)}h{" "}
                     {currFlight.total_duration % 60}m
                   </p>
 
-                  {/* stops */}
                   <p>{currFlight.layovers?.length || 0} stops</p>
 
-                  {/* currFlight path */}
-                  <div>
+                  <div className="segments">
                     {currFlight.flights.map((segment, index) => (
-                      <div key={index}>
+                      <div key={index} className="segment">
                         <p>
                           {segment.departure_airport.id} →{" "}
                           {segment.arrival_airport.id}
@@ -241,9 +243,9 @@ export default function TripResults() {
                   </div>
                 </div>
               ))}
-            </div>
+            </section>
           )}
-        </aside>
+        </div>
       </div>
     </div>
   );
