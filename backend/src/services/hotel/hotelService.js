@@ -40,18 +40,34 @@ async function getHotels({
   });
 
   // -----------------------------------------
-  // HOTSPOTS (NEW)
+  // HOTSPOTS
   // -----------------------------------------
   const hotspots = await getCityHotspots(cityName);
 
   // -----------------------------------------
-  // SCORE + SORT
+  // SCORE + ENRICH DATA
   // -----------------------------------------
   hotels = hotels
-    .map((hotel) => ({
-      ...hotel,
-      score: scoreHotel(hotel, hotspots, maxPrice),
-    }))
+    .map((hotel) => {
+      const result = scoreHotel(hotel, hotspots, maxPrice);
+
+      return {
+        ...hotel,
+
+        // main ranking score (used for sorting)
+        score: result.score,
+
+        // UI-friendly field (what you want to display)
+        distance_to_hotspots_km: result.avgDistanceKm,
+
+        // optional (future UI / debugging)
+        breakdown: {
+          ratingScore: result.ratingScore,
+          priceScore: result.priceScore,
+          distanceScore: result.distanceScore,
+        },
+      };
+    })
     .sort((a, b) => b.score - a.score);
 
   // -----------------------------------------

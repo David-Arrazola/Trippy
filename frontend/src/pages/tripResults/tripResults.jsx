@@ -18,8 +18,9 @@ const mapContainerStyle = {
 };
 
 //TODO In map make it so line colors switch per city and identify which city comes first, then second, then third
+//TODO improve hotel display on frontend so it shows you why the ai recommend this hotel. SHOW: star rating, price per night, distance from major attractions, final score
+//TODO take out toggle that shows AI reccommend pick and then the browse option.
 //TODO FIX BUDGETING SPLIT for hotels/flights/city days(I feel like something might be off with budgetting)
-//TODO PASS in hotels and flights into a openai prompt so that chat can decide which is best hotels and flights based on budget but location of hotel to hotspots and length of flight
 //TODO ASK openAI to actually make an itinerary for user's per the days they are in each city. As in what to do per each day at city-X
 
 export default function TripResults() {

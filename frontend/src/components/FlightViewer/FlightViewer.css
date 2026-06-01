@@ -1,20 +1,39 @@
-.flightTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  margin-bottom: 0.75rem;
-}
-
 .flightCard {
-  padding: 1.2rem;
+  padding: 1.25rem;
 
   border-radius: 18px;
 
   background: rgba(255, 255, 255, 0.04);
 
   border: 1px solid rgba(255, 255, 255, 0.08);
+
+  transition: 0.25s ease;
 }
+
+/* ============================== */
+/* AI PICK */
+/* ============================== */
+
+.aiPick {
+  border: 1px solid rgba(56, 189, 248, 0.45);
+
+  box-shadow:
+    0 0 0 1px rgba(56, 189, 248, 0.2),
+    0 0 24px rgba(56, 189, 248, 0.15);
+}
+
+.recommendBadge {
+  margin-bottom: 1rem;
+
+  color: #38bdf8;
+
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* ============================== */
+/* HEADER */
+/* ============================== */
 
 .flightHeader {
   display: flex;
@@ -24,11 +43,24 @@
   margin-bottom: 1rem;
 }
 
+.flightHeader h3 {
+  color: white;
+  font-size: 1rem;
+  margin: 0;
+}
+
 .flightPrice {
   color: #38bdf8;
+
   font-size: 1.3rem;
   font-weight: 800;
+
+  margin-top: 0.25rem;
 }
+
+/* ============================== */
+/* INFO */
+/* ============================== */
 
 .flightInfo {
   display: flex;
@@ -37,7 +69,13 @@
   margin-bottom: 1rem;
 
   color: #cbd5e1;
+
+  flex-wrap: wrap;
 }
+
+/* ============================== */
+/* SEGMENTS */
+/* ============================== */
 
 .segment {
   margin-top: 0.8rem;
@@ -45,7 +83,13 @@
   padding-top: 0.8rem;
 
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  color: #cbd5e1;
 }
+
+/* ============================== */
+/* LINK */
+/* ============================== */
 
 .flightLink {
   display: inline-block;
@@ -60,4 +104,41 @@
 
 .flightLink:hover {
   color: white;
+}
+
+/* ============================== */
+/* CAROUSEL */
+/* ============================== */
+
+.carouselButtons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 1.25rem;
+}
+
+.carouselButtons button {
+  border: none;
+
+  padding: 0.45rem 0.85rem;
+
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  color: white;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.carouselButtons button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.carouselButtons span {
+  color: #cbd5e1;
+  font-size: 0.9rem;
 }

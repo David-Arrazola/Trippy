@@ -7,23 +7,10 @@ function FlightViewer({ flights }) {
   // -----------------------------------
 
   const [currentFlightIndex, setCurrentFlightIndex] = useState(0);
-  const [browseMode, setBrowseMode] = useState(false);
 
-  // -----------------------------------
-  // AI RECOMMENDED FLIGHT
-  // -----------------------------------
+  if (!flights?.length) return null;
 
-  const recommendedFlight = flights[0];
-
-  // -----------------------------------
-  // CURRENT DISPLAYED FLIGHT
-  // -----------------------------------
-
-  const displayedFlight = browseMode
-    ? flights[currentFlightIndex]
-    : recommendedFlight;
-
-  if (!displayedFlight) return null;
+  const displayedFlight = flights[currentFlightIndex];
 
   // -----------------------------------
   // NEXT FLIGHT
@@ -45,26 +32,15 @@ function FlightViewer({ flights }) {
 
   return (
     <section className="card">
-      {/* HEADER */}
+      <h2>Flights</h2>
 
-      <div className="flightTop">
-        <h2>Flights</h2>
+      {/* AI PICK */}
 
-        <button
-          className="browseButton"
-          onClick={() => setBrowseMode(!browseMode)}
-        >
-          {browseMode ? "Show AI Pick" : "Browse Flights"}
-        </button>
-      </div>
+      {currentFlightIndex === 0 && (
+        <p className="recommendBadge">✈️ AI Recommendation</p>
+      )}
 
-      {/* BADGE */}
-
-      {!browseMode && <p className="recommendBadge">✈️ AI Recommended</p>}
-
-      {/* FLIGHT CARD */}
-
-      <div className="flightCard">
+      <div className={`flightCard ${currentFlightIndex === 0 ? "aiPick" : ""}`}>
         {/* HEADER */}
 
         <div className="flightHeader">
@@ -81,15 +57,15 @@ function FlightViewer({ flights }) {
           </div>
         </div>
 
-        {/* FLIGHT INFO */}
+        {/* FLIGHT STATS */}
 
         <div className="flightInfo">
           <p>
-            {Math.floor(displayedFlight.total_duration / 60)}h{" "}
+            ⏱️ {Math.floor(displayedFlight.total_duration / 60)}h{" "}
             {displayedFlight.total_duration % 60}m
           </p>
 
-          <p>{displayedFlight.layovers?.length || 0} stops</p>
+          <p>🛑 {displayedFlight.layovers?.length || 0} stops</p>
         </div>
 
         {/* SEGMENTS */}
@@ -108,7 +84,7 @@ function FlightViewer({ flights }) {
           ))}
         </div>
 
-        {/* BOOKING LINK */}
+        {/* BOOKING */}
 
         {displayedFlight.booking_token && (
           <a
@@ -123,7 +99,7 @@ function FlightViewer({ flights }) {
 
         {/* CAROUSEL */}
 
-        {browseMode && flights.length > 1 && (
+        {flights.length > 1 && (
           <div className="carouselButtons">
             <button onClick={prevFlight}>←</button>
 

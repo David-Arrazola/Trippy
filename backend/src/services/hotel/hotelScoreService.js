@@ -18,7 +18,13 @@ function scoreHotel(hotel, hotspots, maxPrice) {
 
   const ratingScore = rating * 2;
 
-  return ratingScore + priceScore + distanceScore;
+  return {
+    score: ratingScore + priceScore + distanceScore,
+    avgDistanceKm: avgDist,
+    ratingScore,
+    priceScore,
+    distanceScore,
+  };
 }
 
 export default scoreHotel;

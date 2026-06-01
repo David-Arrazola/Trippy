@@ -3,21 +3,16 @@ import "./HotelViewer.css";
 
 function HotelViewer({ hotels }) {
   // -----------------------------------
-  // STORE CURRENT HOTEL INDEX PER CITY
+  // CURRENT HOTEL INDEX PER CITY
   // -----------------------------------
-
   const [selectedHotels, setSelectedHotels] = useState({});
-
-  const [browseMode, setBrowseMode] = useState({});
 
   // -----------------------------------
   // NEXT HOTEL
   // -----------------------------------
-
   const nextHotel = (city, hotelCount) => {
     setSelectedHotels((prev) => ({
       ...prev,
-
       [city]: ((prev[city] || 0) + 1) % hotelCount,
     }));
   };
@@ -25,24 +20,10 @@ function HotelViewer({ hotels }) {
   // -----------------------------------
   // PREVIOUS HOTEL
   // -----------------------------------
-
   const prevHotel = (city, hotelCount) => {
     setSelectedHotels((prev) => ({
       ...prev,
-
       [city]: ((prev[city] || 0) - 1 + hotelCount) % hotelCount,
-    }));
-  };
-
-  // -----------------------------------
-  // TOGGLE MODE
-  // -----------------------------------
-
-  const toggleBrowseMode = (city) => {
-    setBrowseMode((prev) => ({
-      ...prev,
-
-      [city]: !prev[city],
     }));
   };
 
@@ -55,48 +36,57 @@ function HotelViewer({ hotels }) {
 
         const currentIndex = selectedHotels[city] || 0;
 
-        const browsing = browseMode[city];
-
-        const currentHotel = browsing
-          ? group.hotels[currentIndex]
-          : group.recommended;
+        const currentHotel = group.hotels?.[currentIndex];
 
         if (!currentHotel) return null;
 
+        const isAIPick = currentIndex === 0;
+
         return (
           <div key={i} className="hotelCityGroup">
-            {/* CITY TITLE */}
-
+            {/* CITY HEADER */}
             <div className="hotelHeader">
               <h3>{city}</h3>
-
-              <button
-                className="browseButton"
-                onClick={() => toggleBrowseMode(city)}
-              >
-                {browsing ? "Show AI Pick" : "Browse Hotels"}
-              </button>
             </div>
 
-            {/* RECOMMENDATION LABEL */}
-
-            {!browsing && <p className="recommendBadge">✨ AI Recommended</p>}
+            {/* AI LABEL */}
+            {isAIPick && <p className="recommendBadge">✨ AI Recommendation</p>}
 
             {/* HOTEL CARD */}
-
-            <div className="hotelCard">
+            <div className={`hotelCard ${isAIPick ? "aiPick" : ""}`}>
+              {/* NAME */}
               <p className="hotelName">{currentHotel.name}</p>
 
+              {/* PRICE */}
               <p className="hotelPrice">
-                ${currentHotel.rate_per_night?.lowest || "N/A"}/ night
+                💲 $
+                {currentHotel.rate_per_night?.lowest ||
+                  currentHotel.total_rate?.lowest ||
+                  "N/A"}
+                /night
               </p>
 
+              {/* RATING */}
               {currentHotel.overall_rating && (
-                <p>⭐ {currentHotel.overall_rating}</p>
+                <p className="hotelStat">⭐ {currentHotel.overall_rating}</p>
               )}
 
-              {/* BOOKING LINK */}
+              {/* DISTANCE (FIXED FIELD NAME) */}
+              {currentHotel.distance_to_hotspots_km != null && (
+                <p className="hotelStat">
+                  📍 {currentHotel.distance_to_hotspots_km.toFixed(1)} km from
+                  major attractions
+                </p>
+              )}
 
+              {/* SCORE */}
+              {currentHotel.score != null && (
+                <p className="hotelScore">
+                  Final Score: {currentHotel.score.toFixed(1)}
+                </p>
+              )}
+
+              {/* BOOKING */}
               {currentHotel.link && (
                 <a
                   href={currentHotel.link}
@@ -108,9 +98,8 @@ function HotelViewer({ hotels }) {
                 </a>
               )}
 
-              {/* CAROUSEL CONTROLS */}
-
-              {browsing && group.hotels.length > 1 && (
+              {/* CAROUSEL */}
+              {group.hotels.length > 1 && (
                 <div className="carouselButtons">
                   <button onClick={() => prevHotel(city, group.hotels.length)}>
                     ←
