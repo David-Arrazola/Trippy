@@ -1,5 +1,5 @@
 import generatePrompt from "../utils/prompts/itineraryPrompt.js";
-import getHotels from "./hotelService.js";
+import getHotels from "./hotel/hotelService.js";
 import searchFlights from "./flightService.js";
 import queryOpenAi from "./openai/queryOpenAi.js";
 import geocodeCities from "./geocodeService.js";
