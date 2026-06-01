@@ -1,6 +1,6 @@
 const API = import.meta.env.VITE_API_URL;
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTrip } from "../../context/tripContext.jsx";
 import "./TripForm.css";
@@ -8,6 +8,7 @@ import "./TripForm.css";
 export default function TripForm() {
   const [userInput, setUserInput] = useState("");
   const { tripState, setTripState } = useTrip();
+  const [userLocation, setUserLocation] = useState(null);
 
   // 👇 CHAT HISTORY (this is the big change)
   const [messages, setMessages] = useState([
@@ -15,6 +16,22 @@ export default function TripForm() {
   ]);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      (error) => {
+        console.error("Location access denied:", error);
+      },
+    );
+  }, []);
 
   // STREAMING FUNCTION
   const streamMessage = (message) => {
@@ -58,7 +75,6 @@ export default function TripForm() {
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
 
     setUserInput("");
-
     try {
       const response = await fetch(API, {
         method: "POST",
@@ -68,6 +84,7 @@ export default function TripForm() {
         body: JSON.stringify({
           userInput: userMessage,
           tripState,
+          userLocation,
         }),
       });
 

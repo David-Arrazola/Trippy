@@ -19,7 +19,6 @@ const mapContainerStyle = {
 
 //TODO In map make it so line colors switch per city and identify which city comes first, then second, then third
 //TODO FIX BUDGETING SPLIT for hotels/flights/city days(I feel like something might be off with budgetting)
-//TODO Make it so website asks for your location so that way user doens't have to specify which airport they want to leave from (They still can specifiy tho)
 //TODO PASS in hotels and flights into a openai prompt so that chat can decide which is best hotels and flights based on budget but location of hotel to hotspots and length of flight
 //TODO ASK openAI to actually make an itinerary for user's per the days they are in each city. As in what to do per each day at city-X
 

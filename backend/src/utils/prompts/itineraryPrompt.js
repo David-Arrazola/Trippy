@@ -24,7 +24,8 @@ function generatePrompt(tripData) {
 
     AIRPORT RULES:
     - IMPORTANT!!! DO NOT, recommend or add an airport to the returned tripData IF the user never inputed the departure airport
-    - Convert departureAirport to IATA if needed.
+    - IF "departureAirport" IS NOT an actual international/popular commercial airport, then FIND the closest major airport to the departureAirport
+    - Convert departureAirport to IATA.
     - Convert destination to closest major airport.
 
     CITY RULES:

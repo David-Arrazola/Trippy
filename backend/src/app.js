@@ -7,6 +7,7 @@ import queryOpenAi from "./services/openai/queryOpenAi.js";
 
 import extractDataPrompt from "./utils/prompts/extractDataPrompt.js";
 import canPlanTripPrompt from "./utils/prompts/canPlanTripPrompt.js";
+import resolveDepartureAirport from "./services/closestAirportService.js";
 
 dotenv.config();
 
@@ -18,17 +19,20 @@ app.use(express.json());
 /**
  * MAIN ROUTE
  */
-//TODO QUERY hotels only if user gives a startTripDate and returnTripDate and their budget
-//Todo Query flights only if user says they are flying/departing from a specific airport + what it says in line 23
 app.post("/", async (req, res) => {
   try {
-    const { userInput, tripState } = req.body;
+    const { userInput, tripState, userLocation } = req.body;
 
     // -------------------------
     // EXTRACT TRIP DATA
     // -------------------------
     const extractionPrompt = extractDataPrompt(userInput, tripState);
     const tripData = await queryOpenAi(extractionPrompt);
+
+    tripData.departureAirport = await resolveDepartureAirport(
+      tripData,
+      userLocation,
+    );
 
     // -------------------------
     // DETERMINE IF WE CAN PLAN

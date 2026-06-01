@@ -13,7 +13,7 @@ async function generateTrip(tripData) {
 
   const gptText = await queryOpenAi(query);
 
-  console.log("THIS IS THE OUTPUT FROM GPT", gptText);
+  console.log("THIS IS THE OUTPUT FROM GPT", gptText); //FIX DELETE
 
   gptText.cities = await geocodeCities(gptText.cities, tripData.destination);
 
