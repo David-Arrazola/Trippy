@@ -1,0 +1,133 @@
+/* ========================= */
+/* MAIN SECTION */
+/* ========================= */
+
+.card {
+  padding: 1.6rem;
+  border-radius: 28px;
+
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  color: white;
+}
+
+.card h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+
+  background: linear-gradient(to right, #ffffff, #7dd3fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ========================= */
+/* CITY SECTION */
+/* ========================= */
+
+.cityItinerary {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cityItinerary h3 {
+  font-size: 1.4rem;
+  color: #7dd3fc;
+  margin-bottom: 1rem;
+}
+
+/* ========================= */
+/* DAY CARD */
+/* ========================= */
+
+.dayCard {
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+.dayCard:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dayCard h4 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+/* ========================= */
+/* TIME BLOCKS */
+/* ========================= */
+
+.timeBlock {
+  margin-bottom: 1rem;
+}
+
+.timeBlock h5 {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+
+  color: #cbd5e1;
+}
+
+/* ========================= */
+/* LISTS */
+/* ========================= */
+
+.timeBlock ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.timeBlock li {
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+
+  color: #e2e8f0;
+}
+
+/* ========================= */
+/* OPTIONAL: MAKE IT MORE STRUCTURED */
+/* ========================= */
+
+.dayCard {
+  display: grid;
+  gap: 0.8rem;
+}
+
+/* ========================= */
+/* MOBILE */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .card {
+    padding: 1rem;
+  }
+
+  .dayCard {
+    padding: 1rem;
+  }
+
+  .cityItinerary h3 {
+    font-size: 1.2rem;
+  }
+}

@@ -11,17 +11,16 @@ import {
   useJsApiLoader,
 } from "@react-google-maps/api";
 import FlightViewer from "../../components/FlightViewer/FlightViewer.jsx";
+import DailyPlanViewer from "../../components/DailyPlanViewer/DailyPlanViewer.jsx";
 
 const mapContainerStyle = {
   width: "100%",
   height: "500px",
 };
 
+//TODO ASK openAI to actually make an itinerary for user's per the days they are in each city. As in what to do per each day at city-X. ALSO show the hotels and things to do the in the map (maybe)
 //TODO In map make it so line colors switch per city and identify which city comes first, then second, then third
-//TODO improve hotel display on frontend so it shows you why the ai recommend this hotel. SHOW: star rating, price per night, distance from major attractions, final score
-//TODO take out toggle that shows AI reccommend pick and then the browse option.
 //TODO FIX BUDGETING SPLIT for hotels/flights/city days(I feel like something might be off with budgetting)
-//TODO ASK openAI to actually make an itinerary for user's per the days they are in each city. As in what to do per each day at city-X
 
 export default function TripResults() {
   const { tripState } = useTrip();
@@ -171,6 +170,11 @@ export default function TripResults() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Daily Itinerary */}
+        <section>
+          {cities?.length > 0 && <DailyPlanViewer cities={cities} />}
         </section>
 
         {/* HOTEL + FLIGHT GRID */}
