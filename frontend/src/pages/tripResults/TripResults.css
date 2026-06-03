@@ -1,11 +1,20 @@
+/* ============================== */
+/* HEADER */
+/* ============================== */
+
 header > h1 {
   color: aquamarine;
+  margin-bottom: 0.4rem;
 }
 
 header > p {
   color: azure;
   font-size: 20px;
 }
+
+/* ============================== */
+/* CARD */
+/* ============================== */
 
 .card {
   padding: 1.6rem;
@@ -27,50 +36,63 @@ header > p {
 
 .card h2 {
   font-size: 1.7rem;
-  margin-bottom: 1.8rem;
-
+  margin-bottom: 1.2rem;
   font-weight: 800;
 
   background: linear-gradient(to right, #ffffff, #7dd3fc);
-
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+/* ============================== */
+/* MAIN LAYOUT */
+/* ============================== */
+
 .tripContent {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.leftColumn,
+.rightColumn {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
 /* ============================== */
-/* CITIES */
+/* CITY TABS */
 /* ============================== */
 
-.citiesGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
+.cityTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
-.cityItem {
-  padding: 1rem;
+.cityTab {
+  border: none;
+  border-radius: 999px;
 
-  border-radius: 18px;
+  padding: 0.7rem 1.2rem;
 
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
 
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: 0.25s;
 }
 
-/* ============================== */
-/* RESULTS GRID */
-/* ============================== */
+.cityTab:hover {
+  background: rgba(125, 211, 252, 0.2);
+}
 
-.resultsGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+.cityTab.active {
+  background: #38bdf8;
+  color: black;
+  font-weight: 700;
 }
 
 /* ============================== */
@@ -88,11 +110,11 @@ a:hover {
 }
 
 /* ============================== */
-/* MOBILE */
+/* RESPONSIVE */
 /* ============================== */
 
 @media (max-width: 900px) {
-  .resultsGrid {
+  .tripContent {
     grid-template-columns: 1fr;
   }
 }

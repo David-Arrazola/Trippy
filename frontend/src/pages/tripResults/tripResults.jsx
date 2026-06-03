@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTrip } from "../../context/tripContext.jsx";
 
@@ -24,6 +24,8 @@ export default function TripResults() {
   const { tripState } = useTrip();
   const navigate = useNavigate();
 
+  const [selectedCityIndex, setSelectedCityIndex] = useState(0);
+
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
   });
@@ -38,6 +40,14 @@ export default function TripResults() {
   const cities = itinerary?.cities || [];
   const hotels = tripState.hotels || [];
   const flights = tripState.flights || [];
+
+  const selectedCity = cities[selectedCityIndex];
+
+  const selectedCityHotels =
+    hotels.find(
+      (hotelGroup) =>
+        hotelGroup.city?.toLowerCase() === selectedCity?.name?.toLowerCase(),
+    ) || null;
 
   const validCities = cities.filter((c) => c.lat && c.lng);
 
@@ -54,7 +64,9 @@ export default function TripResults() {
         }
       : { lat: 39.8283, lng: -98.5795 };
 
-  if (loadError) return <h1>Google Maps failed to load.</h1>;
+  if (loadError) {
+    return <h1>Google Maps failed to load.</h1>;
+  }
 
   return (
     <div className="tripResultsContainer">
@@ -64,63 +76,76 @@ export default function TripResults() {
       </header>
 
       <div className="tripContent">
-        {/* MAP */}
-        <section className="card">
-          <h2>Trip Map</h2>
+        {/* LEFT COLUMN */}
+        <div className="leftColumn">
+          <section className="card">
+            <h2>Trip Map</h2>
 
-          {isLoaded && (
-            <GoogleMap
-              mapContainerStyle={mapContainerStyle}
-              center={defaultCenter}
-              zoom={4}
-            >
-              {validCities.map((city, i) => (
-                <MarkerF
-                  key={i}
-                  position={{
-                    lat: Number(city.lat),
-                    lng: Number(city.lng),
+            {isLoaded && (
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={defaultCenter}
+                zoom={4}
+              >
+                {validCities.map((city, i) => (
+                  <MarkerF
+                    key={i}
+                    position={{
+                      lat: Number(city.lat),
+                      lng: Number(city.lng),
+                    }}
+                  />
+                ))}
+
+                <Polyline
+                  path={pathCoordinates}
+                  options={{
+                    strokeColor: "#fb16ff",
+                    strokeWeight: 5,
                   }}
                 />
-              ))}
+              </GoogleMap>
+            )}
+          </section>
 
-              <Polyline
-                path={pathCoordinates}
-                options={{
-                  strokeColor: "#fb16ff",
-                  strokeWeight: 5,
-                }}
-              />
-            </GoogleMap>
+          {flights?.length > 0 && (
+            <section>
+              <FlightViewer flights={flights} />
+            </section>
           )}
-        </section>
+        </div>
 
-        {/* CITIES */}
-        <section className="card">
-          <h2>Cities</h2>
+        {/* RIGHT COLUMN */}
+        <div className="rightColumn">
+          <section className="card">
+            <h2>Cities</h2>
 
-          <div className="citiesGrid">
-            {cities.map((city, i) => (
-              <div key={i} className="cityItem">
-                <h3>{city.name}</h3>
-                <p>{city.days} days</p>
-                <p>${city.allocated_budget}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+            <div className="cityTabs">
+              {cities.map((city, i) => (
+                <button
+                  key={i}
+                  className={`cityTab ${
+                    i === selectedCityIndex ? "active" : ""
+                  }`}
+                  onClick={() => setSelectedCityIndex(i)}
+                >
+                  {city.name}
+                </button>
+              ))}
+            </div>
+          </section>
 
-        {/* DAILY ITINERARY */}
-        <section className="card">
-          <h2>Daily Itinerary</h2>
+          <section className="card">
+            <h2>Daily Itinerary</h2>
 
-          <DailyPlanViewer cities={cities} />
-        </section>
+            <DailyPlanViewer city={selectedCity} />
+          </section>
 
-        {/* HOTELS + FLIGHTS */}
-        <div className="resultsGrid">
-          {hotels?.length > 0 && <HotelViewer hotels={hotels} />}
-          {flights?.length > 0 && <FlightViewer flights={flights} />}
+          {selectedCityHotels && (
+            <section>
+              <HotelViewer hotels={[selectedCityHotels]} />
+            </section>
+          )}
         </div>
       </div>
     </div>
