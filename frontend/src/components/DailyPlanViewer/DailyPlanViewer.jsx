@@ -1,54 +1,72 @@
+import { useState } from "react";
 import "./DailyPlanViewer.css";
 
 function DailyPlanViewer({ cities }) {
-  if (!cities?.length) return null;
+  const [selectedCityIndex, setSelectedCityIndex] = useState(0);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+
+  const selectedCity = cities?.[selectedCityIndex];
+
+  if (!selectedCity) return null;
+
+  const days = selectedCity.daily_itinerary || [];
+
+  const safeDayIndex =
+    days.length > 0 ? Math.min(selectedDayIndex, days.length - 1) : 0;
+
+  const selectedDay = days[safeDayIndex];
 
   return (
-    <section className="card dailyPlanCard">
-      <h2>Daily Itinerary</h2>
+    <div className="itineraryContainer">
+      {/* CITY TABS */}
 
-      {cities.map((city, cityIndex) => (
-        <div key={cityIndex} className="cityItinerary">
-          <h3>{city.name}</h3>
+      <div className="cityTabs">
+        {cities.map((city, index) => (
+          <button
+            key={index}
+            className={`cityTab ${index === selectedCityIndex ? "active" : ""}`}
+            onClick={() => {
+              setSelectedCityIndex(index);
+              setSelectedDayIndex(0);
+            }}
+          >
+            {city.name}
+          </button>
+        ))}
+      </div>
 
-          {city.daily_itinerary?.map((dayPlan, dayIndex) => (
-            <div key={dayIndex} className="dayCard">
-              <h4>Day {dayPlan.day}</h4>
+      {/* DAY TABS */}
 
-              {/* MORNING */}
-              <div className="timeBlock">
-                <h5>🌅 Morning</h5>
-                <ul>
-                  {dayPlan.morning?.map((activity, i) => (
-                    <li key={i}>{activity}</li>
-                  ))}
-                </ul>
+      <div className="dayTabs">
+        {days.map((day, index) => (
+          <button
+            key={index}
+            className={`dayTab ${index === safeDayIndex ? "active" : ""}`}
+            onClick={() => setSelectedDayIndex(index)}
+          >
+            Day {day.day}
+          </button>
+        ))}
+      </div>
+
+      {/* SELECTED DAY */}
+
+      {selectedDay && (
+        <div className="activityGrid">
+          <h3 className="dayTitle">
+            {selectedCity.name} • Day {selectedDay.day}
+          </h3>
+
+          <div className="activityRow">
+            {selectedDay.activities?.map((activity, index) => (
+              <div key={index} className="activityCard">
+                {activity}
               </div>
-
-              {/* AFTERNOON */}
-              <div className="timeBlock">
-                <h5>☀️ Afternoon</h5>
-                <ul>
-                  {dayPlan.afternoon?.map((activity, i) => (
-                    <li key={i}>{activity}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* EVENING */}
-              <div className="timeBlock">
-                <h5>🌙 Evening</h5>
-                <ul>
-                  {dayPlan.evening?.map((activity, i) => (
-                    <li key={i}>{activity}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      ))}
-    </section>
+      )}
+    </div>
   );
 }
 
