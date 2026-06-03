@@ -2,6 +2,8 @@ import { getJson } from "serpapi";
 import scoreHotel from "./hotelScoreService.js";
 import getCityHotspots from "../hotspots/cityHotspotService.js";
 
+const MAX_DISTANCE_KM = 10; // hard cutoff (~6 miles)
+
 async function getHotels({
   cityName,
   destination,
@@ -21,22 +23,21 @@ async function getHotels({
     sort_by: 8,
   };
 
-  if (maxPrice) {
-    params.max_price = maxPrice;
-  }
+  if (maxPrice) params.max_price = maxPrice;
 
   const response = await getJson(params);
   let hotels = response.properties || [];
 
   // -----------------------------------------
-  // FILTER BAD DATA
+  // STRICT QUALITY FILTER
   // -----------------------------------------
   hotels = hotels.filter((hotel) => {
-    const hasName = hotel.name;
-    const hasPrice = hotel.rate_per_night?.lowest || hotel.total_rate?.lowest;
-    const hasRating = hotel.overall_rating;
-
-    return hasName && hasPrice && hasRating && hotel.overall_rating >= 3;
+    return (
+      hotel.name &&
+      hotel.rate_per_night?.lowest &&
+      hotel.overall_rating &&
+      hotel.overall_rating >= 3.5
+    );
   });
 
   // -----------------------------------------
@@ -45,35 +46,39 @@ async function getHotels({
   const hotspots = await getCityHotspots(cityName);
 
   // -----------------------------------------
-  // SCORE + ENRICH DATA
+  // SCORE HOTELS
   // -----------------------------------------
-  hotels = hotels
-    .map((hotel) => {
-      const result = scoreHotel(hotel, hotspots, maxPrice);
+  const scoredHotels = hotels.map((hotel) => {
+    const result = scoreHotel(hotel, hotspots, maxPrice);
 
-      return {
-        ...hotel,
-
-        // main ranking score (used for sorting)
-        score: result.score,
-
-        // UI-friendly field (what you want to display)
-        distance_to_hotspots_km: result.avgDistanceKm,
-
-        // optional (future UI / debugging)
-        breakdown: {
-          ratingScore: result.ratingScore,
-          priceScore: result.priceScore,
-          distanceScore: result.distanceScore,
-        },
-      };
-    })
-    .sort((a, b) => b.score - a.score);
+    return {
+      ...hotel,
+      score: result.score,
+      distance_km: result.avgDistanceKm,
+      rating: result.rating,
+      price: hotel.rate_per_night?.lowest || hotel.total_rate?.lowest,
+    };
+  });
 
   // -----------------------------------------
-  // RETURN TOP SET
+  // HARD DISTANCE FILTER
   // -----------------------------------------
-  return hotels.slice(0, 12);
+  const nearbyHotels = scoredHotels.filter(
+    (hotel) => hotel.distance_km <= MAX_DISTANCE_KM,
+  );
+
+  // ❗ NO FALLBACK TO BAD HOTELS
+  const finalHotels = nearbyHotels;
+
+  // -----------------------------------------
+  // SORT BEST FIRST
+  // -----------------------------------------
+  finalHotels.sort((a, b) => b.score - a.score);
+
+  // -----------------------------------------
+  // RETURN TOP RESULTS
+  // -----------------------------------------
+  return finalHotels.slice(0, 10);
 }
 
 export default getHotels;

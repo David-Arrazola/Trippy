@@ -2,14 +2,8 @@ import { useState } from "react";
 import "./HotelViewer.css";
 
 function HotelViewer({ hotels }) {
-  // -----------------------------------
-  // CURRENT HOTEL INDEX PER CITY
-  // -----------------------------------
   const [selectedHotels, setSelectedHotels] = useState({});
 
-  // -----------------------------------
-  // NEXT HOTEL
-  // -----------------------------------
   const nextHotel = (city, hotelCount) => {
     setSelectedHotels((prev) => ({
       ...prev,
@@ -17,9 +11,6 @@ function HotelViewer({ hotels }) {
     }));
   };
 
-  // -----------------------------------
-  // PREVIOUS HOTEL
-  // -----------------------------------
   const prevHotel = (city, hotelCount) => {
     setSelectedHotels((prev) => ({
       ...prev,
@@ -33,9 +24,7 @@ function HotelViewer({ hotels }) {
 
       {hotels.map((group, i) => {
         const city = group.city;
-
         const currentIndex = selectedHotels[city] || 0;
-
         const currentHotel = group.hotels?.[currentIndex];
 
         if (!currentHotel) return null;
@@ -44,20 +33,15 @@ function HotelViewer({ hotels }) {
 
         return (
           <div key={i} className="hotelCityGroup">
-            {/* CITY HEADER */}
             <div className="hotelHeader">
               <h3>{city}</h3>
             </div>
 
-            {/* AI LABEL */}
             {isAIPick && <p className="recommendBadge">✨ AI Recommendation</p>}
 
-            {/* HOTEL CARD */}
             <div className={`hotelCard ${isAIPick ? "aiPick" : ""}`}>
-              {/* NAME */}
               <p className="hotelName">{currentHotel.name}</p>
 
-              {/* PRICE */}
               <p className="hotelPrice">
                 💲 $
                 {currentHotel.rate_per_night?.lowest ||
@@ -66,27 +50,24 @@ function HotelViewer({ hotels }) {
                 /night
               </p>
 
-              {/* RATING */}
-              {currentHotel.overall_rating && (
-                <p className="hotelStat">⭐ {currentHotel.overall_rating}</p>
+              {currentHotel.rating && (
+                <p className="hotelStat">⭐ {currentHotel.rating}</p>
               )}
 
-              {/* DISTANCE (FIXED FIELD NAME) */}
-              {currentHotel.distance_to_hotspots_km != null && (
+              {/* ✅ FIXED FIELD NAME */}
+              {currentHotel.distance_km != null && (
                 <p className="hotelStat">
-                  📍 {currentHotel.distance_to_hotspots_km.toFixed(1)} km from
-                  major attractions
+                  📍 {currentHotel.distance_km.toFixed(1)} km from major
+                  attractions
                 </p>
               )}
 
-              {/* SCORE */}
               {currentHotel.score != null && (
                 <p className="hotelScore">
                   Final Score: {currentHotel.score.toFixed(1)}
                 </p>
               )}
 
-              {/* BOOKING */}
               {currentHotel.link && (
                 <a
                   href={currentHotel.link}
@@ -98,7 +79,6 @@ function HotelViewer({ hotels }) {
                 </a>
               )}
 
-              {/* CAROUSEL */}
               {group.hotels.length > 1 && (
                 <div className="carouselButtons">
                   <button onClick={() => prevHotel(city, group.hotels.length)}>

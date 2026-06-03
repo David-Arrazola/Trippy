@@ -1,27 +1,40 @@
 import avgDistanceToHotspots from "../hotspots/distToHotspotService.js";
 
+const MAX_DISTANCE_KM = 10;
+
 function scoreHotel(hotel, hotspots, maxPrice) {
   const rating = hotel.overall_rating || 3;
 
   const price =
     hotel.rate_per_night?.lowest || hotel.total_rate?.lowest || maxPrice || 200;
 
-  // Distance penalty (lower is better)
+  // -----------------------------------------
+  // DISTANCE SCORE (PRIMARY FACTOR)
+  // -----------------------------------------
   const avgDist = avgDistanceToHotspots(hotel, hotspots);
 
-  const distanceScore = Math.max(0, 10 - avgDist);
+  const distanceScore =
+    avgDist > MAX_DISTANCE_KM ? 0 : (1 - avgDist / MAX_DISTANCE_KM) * 10;
 
-  // Normalize price score
+  // -----------------------------------------
+  // PRICE SCORE (SECONDARY FACTOR)
+  // -----------------------------------------
   const priceScore = maxPrice
     ? Math.max(0, ((maxPrice - price) / maxPrice) * 10)
     : 5;
 
-  const ratingScore = rating * 2;
+  // -----------------------------------------
+  // FINAL SCORE (ONLY PRICE + DISTANCE)
+  // -----------------------------------------
+  const finalScore = distanceScore * 0.6 + priceScore * 0.4;
 
   return {
-    score: ratingScore + priceScore + distanceScore,
+    score: finalScore,
+
+    // 👇 still returned for UI
+    rating,
+
     avgDistanceKm: avgDist,
-    ratingScore,
     priceScore,
     distanceScore,
   };
