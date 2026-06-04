@@ -17,7 +17,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://trippy-9uju1g2u1-david-arrazola-s-projects.vercel.app/",
+    origin: "https://trippy-ochre.vercel.app/",
   }),
 );
 
