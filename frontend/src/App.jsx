@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage/landingPage.jsx";
-import TripResults from "./pages/TripResults/TripResults.jsx";
+import TripResults from "./pages/tripResults/tripResults.jsx";
 
 function App() {
   return (
