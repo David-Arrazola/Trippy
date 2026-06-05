@@ -1,3 +1,4 @@
+//FIX CREATE NEW .env files for frontend and backend and generate NEW API keys because of exposure
 // TODO ADD like a info box in the landing page that explains to users that transportation between cities is not accounted for. Only getting and leaving is
 // TODO Add a feature that lets user's edit their prompt AFTER submitting so they can edit their budget or add more details
 // TODO if flight or hotel is not appearing, let  user's know that they need to increase their budget
