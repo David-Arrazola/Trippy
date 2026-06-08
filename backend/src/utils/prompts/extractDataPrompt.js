@@ -1,8 +1,10 @@
-function extractDataPrompt(userInput, tripState) {
+function extractDataPrompt(userInput, tripState, referenceDate) {
   const extractQuery = `
         You are an AI travel information extraction engine.
 
         Your ONLY task is to extract structured travel information from the user's message.
+
+        TODAY'S DATE (use this to resolve relative dates): ${referenceDate}
 
         IMPORTANT RULES:
         1. Return ONLY valid JSON.
@@ -13,7 +15,11 @@ function extractDataPrompt(userInput, tripState) {
         6. Convert airport names into valid IATA airport codes when possible.
         7. Budget must be a number only.
         8. Duration must be number of days only.
-        9. Dates must use YYYY-MM-DD format when possible.
+        9. Dates must use YYYY-MM-DD format.
+        10. Convert relative date phrases into concrete YYYY-MM-DD dates using TODAY'S DATE.
+            Examples: "next Monday", "in two weeks", "this Friday", "end of July".
+        11. If the user gives an exact calendar date, use it as-is.
+        12. If no dates are mentioned at all, leave startDate and returnDate as null.
 
         FIELDS TO EXTRACT:
         - destination
@@ -44,10 +50,10 @@ function extractDataPrompt(userInput, tripState) {
         3-letter IATA airport code.
 
         startDate:
-        Trip departure date.
+        Trip departure date in YYYY-MM-DD. Resolve relative phrases from TODAY'S DATE.
 
         returnDate:
-        Trip return date.
+        Trip return date in YYYY-MM-DD. Resolve relative phrases from TODAY'S DATE.
 
         transportation:
         How user plans to travel.
@@ -93,6 +99,38 @@ function extractDataPrompt(userInput, tripState) {
         "returnDate": null,
         "transportation": null,
         "activities": ["beaches", "hiking"]
+        }
+
+        USER:
+        "I want to leave next Monday for Tokyo for 7 days."
+
+        OUTPUT (if today is 2026-06-08):
+        {
+        "destination": "Japan",
+        "cities": ["Tokyo"],
+        "duration": 7,
+        "budget": null,
+        "departureAirport": null,
+        "startDate": "2026-06-09",
+        "returnDate": null,
+        "transportation": null,
+        "activities": []
+        }
+
+        USER:
+        "Paris in two weeks for 5 days."
+
+        OUTPUT (if today is 2026-06-08):
+        {
+        "destination": "France",
+        "cities": ["Paris"],
+        "duration": 5,
+        "budget": null,
+        "departureAirport": null,
+        "startDate": "2026-06-22",
+        "returnDate": null,
+        "transportation": null,
+        "activities": []
         }
 
         USER MESSAGE:

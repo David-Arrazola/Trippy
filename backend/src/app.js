@@ -8,6 +8,7 @@ import queryOpenAi from "./services/openai/queryOpenAi.js";
 import extractDataPrompt from "./utils/prompts/extractDataPrompt.js";
 import canPlanTripPrompt from "./utils/prompts/canPlanTripPrompt.js";
 import resolveDepartureAirport from "./services/closestAirportService.js";
+import resolveTripDates from "./utils/resolveTripDates.js";
 
 dotenv.config();
 
@@ -28,18 +29,25 @@ app.use(express.json());
  */
 app.post("/", async (req, res) => {
   try {
-    const { userInput, tripState, userLocation } = req.body;
+    const { userInput, tripState, userLocation, clientDate } = req.body;
+    const referenceDate = clientDate ?? new Date().toISOString().slice(0, 10);
 
     // -------------------------
     // EXTRACT TRIP DATA
     // -------------------------
-    const extractionPrompt = extractDataPrompt(userInput, tripState);
-    const tripData = await queryOpenAi(extractionPrompt);
+    const extractionPrompt = extractDataPrompt(
+      userInput,
+      tripState,
+      referenceDate,
+    );
+    let tripData = await queryOpenAi(extractionPrompt);
 
     tripData.departureAirport = await resolveDepartureAirport(
       tripData,
       userLocation,
     );
+
+    tripData = resolveTripDates(tripData, referenceDate);
 
     // -------------------------
     // DETERMINE IF WE CAN PLAN

@@ -88,6 +88,7 @@ export default function TripForm() {
           userInput: userMessage,
           tripState,
           userLocation,
+          clientDate: new Date().toLocaleDateString("en-CA"),
         }),
       });
 

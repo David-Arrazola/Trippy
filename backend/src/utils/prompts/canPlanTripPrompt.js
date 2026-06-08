@@ -16,6 +16,9 @@ function canPlanTripPrompt(tripData, userInput) {
     - destination is always required and just the location is NOT enough to begin planning
     - if ONLY destination is provided (e.g. "Japan"), you SHOULD ask a follow-up question first related to the empty fields of the parameter "tripData".
     - if user already provided multiple details (budget, dates, cities, airport), you SHOULD proceed to generate
+    - dates are OPTIONAL. Relative dates like "next Monday" or "in two weeks" count as valid date info.
+      If dates are missing entirely, the backend will default the trip to one month from today.
+    - do NOT ask follow-up questions solely to get exact calendar dates
 
     IMPORTANT LOGIC:
     - If only destination exists → ASK follow-up
