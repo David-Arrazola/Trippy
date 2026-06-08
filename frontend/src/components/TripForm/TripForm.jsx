@@ -7,6 +7,7 @@ import "./TripForm.css";
 
 export default function TripForm() {
   const [userInput, setUserInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { tripState, setTripState } = useTrip();
   const [userLocation, setUserLocation] = useState(null);
 
@@ -75,6 +76,8 @@ export default function TripForm() {
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
 
     setUserInput("");
+    setIsLoading(true);
+
     try {
       const response = await fetch(API, {
         method: "POST",
@@ -119,6 +122,9 @@ export default function TripForm() {
       }
     } catch (err) {
       console.error(err);
+      streamMessage("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -131,6 +137,17 @@ export default function TripForm() {
             <strong>{msg.role === "user" ? "Me" : "Red"}:</strong> {msg.content}
           </div>
         ))}
+
+        {isLoading && (
+          <div className="chatMessage assistant loadingMessage">
+            <strong>Red:</strong>
+            <span className="typingIndicator" aria-label="Red is thinking">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </div>
+        )}
       </section>
 
       {/* INPUT */}
@@ -139,9 +156,12 @@ export default function TripForm() {
           placeholder="Enter your response..."
           value={userInput}
           onChange={updateMessage}
+          disabled={isLoading}
         />
 
-        <button type="submit">Send</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Thinking..." : "Send"}
+        </button>
       </form>
     </>
   );

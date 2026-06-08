@@ -13,13 +13,13 @@ dotenv.config();
 
 const app = express();
 
-// app.use(cors({ origin: /localhost/ }));
+app.use(cors({ origin: /localhost/ }));
 
-app.use(
-  cors({
-    origin: "https://trippy-ochre.vercel.app",
-  }),
-);
+// app.use(
+//   cors({
+//     origin: "https://trippy-ochre.vercel.app",
+//   }),
+// );
 
 app.use(express.json());
 
