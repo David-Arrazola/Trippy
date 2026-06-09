@@ -13,6 +13,8 @@ async function queryOpenAi(prompt) {
     input: prompt,
   });
 
+  console.log(response.output_text); //FIX DELETE
+
   const gptText = JSON.parse(response.output_text);
 
   return gptText;

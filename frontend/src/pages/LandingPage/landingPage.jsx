@@ -1,9 +1,11 @@
 import TripForm from "../../components/TripForm/TripForm.jsx";
+import Navbar from "../../components/Navbar/Navbar.jsx";
 import "./landingPage.css";
 
 function LandingPage() {
   return (
     <div className="landingPage">
+      <Navbar />
       {/* BACKGROUND GLOW */}
       <div className="backgroundGradient"></div>
 

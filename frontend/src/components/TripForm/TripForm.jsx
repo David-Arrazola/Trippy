@@ -1,8 +1,7 @@
-const API = import.meta.env.VITE_API_URL;
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTrip } from "../../context/tripContext.jsx";
+import { tripApi } from "../../utils/api.js";
 import "./TripForm.css";
 
 export default function TripForm() {
@@ -79,20 +78,12 @@ export default function TripForm() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(API, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userInput: userMessage,
-          tripState,
-          userLocation,
-          clientDate: new Date().toLocaleDateString("en-CA"),
-        }),
+      const data = await tripApi.plan({
+        userInput: userMessage,
+        tripState,
+        userLocation,
+        clientDate: new Date().toLocaleDateString("en-CA"),
       });
-
-      const data = await response.json();
 
       // -------------------------
       // FOLLOW UP

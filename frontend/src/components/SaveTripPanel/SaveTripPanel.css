@@ -1,0 +1,77 @@
+.saveTripPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+  min-width: 220px;
+}
+
+.saveTripInput {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+}
+
+.saveTripCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.saveTripButton {
+  padding: 0.65rem 1.2rem;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+
+.saveTripButton.secondary {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.saveTripButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.saveTripSaved {
+  color: #86efac;
+  font-weight: 700;
+}
+
+.saveTripMessage {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.tripHeaderMain {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .tripHeaderMain {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .saveTripPanel {
+    align-items: center;
+    width: 100%;
+  }
+}

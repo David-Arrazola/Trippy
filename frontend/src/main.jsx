@@ -3,11 +3,14 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { TripProvider } from "./context/tripContext.jsx";
+import { AuthProvider } from "./context/authContext.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <TripProvider>
-    <StrictMode>
-      <App />
-    </StrictMode>
-  </TripProvider>,
+  <AuthProvider>
+    <TripProvider>
+      <StrictMode>
+        <App />
+      </StrictMode>
+    </TripProvider>
+  </AuthProvider>,
 );
