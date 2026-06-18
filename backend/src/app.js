@@ -22,19 +22,19 @@ const app = express();
 
 
 
-app.use(cors({ origin: /localhost/ }));
+// app.use(cors({ origin: /localhost/ }));
 
 
 
-// app.use(
+app.use(
 
-//   cors({
+  cors({
 
-//     origin: "https://trippy-ochre.vercel.app",
+    origin: "https://trippy-ochre.vercel.app",
 
-//   }),
+  }),
 
-// );
+);
 
 
 
