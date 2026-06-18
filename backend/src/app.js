@@ -29,10 +29,12 @@ const app = express();
 app.use(
 
   cors({
-
-    origin: "https://trippy-ochre.vercel.app",
-
-  }),
+    origin: [
+      "https://trippy-ochre.vercel.app",
+      "http://localhost:5173"
+    ],
+    credentials: true
+  })
 
 );
 
